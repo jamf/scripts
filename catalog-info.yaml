@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: scripts
+  description: A collection of scripts created by Jamfs
+spec:
+  type: library
+  lifecycle: experimental
+  owner: sales-engineers
+  system: jamf-concept-projects

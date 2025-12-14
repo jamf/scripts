@@ -1,7 +1,76 @@
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# -------------------------------------------------
+# macOS system files
+# -------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
 
+# Thumbnails
+._*
+
+# macOS folder attributes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# -------------------------------------------------
+# IDE / Editor files
+# -------------------------------------------------
+
+# VS Code
+.vscode/
+
+# JetBrains IDEs (IntelliJ, PyCharm, etc.)
+.idea/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim / Neovim swap files
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# -------------------------------------------------
+# Shell / Script tooling artifacts
+# -------------------------------------------------
+
+# Logs / temp files
+*.log
+*.tmp
+tmp/
+logs/
+
+# Local environment files
+.env
+.env.*
+
+# -------------------------------------------------
+# Homebrew / macOS utilities (if any accidentally show up)
+# -------------------------------------------------
+*.lockfile
+
+# -------------------------------------------------
+# Node (in case you use any tooling)
+# -------------------------------------------------
+node_modules/
+
+# -------------------------------------------------
+# Misc
+# -------------------------------------------------
+*.bak
+*.old
+
+
+
+# -------------------------------------------------
+# Swift
+# -------------------------------------------------
 ## User settings
 xcuserdata/
 
@@ -60,3 +129,4 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+

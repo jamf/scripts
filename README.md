@@ -1,2 +1,3 @@
-# scripts
-Misc. support utilities related to Jamf products
+## Scripts
+
+A collection of useful scripts created by Jamfs is located in the /projects directory. 
