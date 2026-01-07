@@ -1,0 +1,53 @@
+name: License Header Check
+
+on:
+  pull_request:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  check-license:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check for License Headers
+        run: |
+          failed=0
+          # Find files: .sh, .go, .swift, .py
+          # Exclude hidden directories/files (like inside .git)
+          files=$(find . -type f \( -name "*.sh" -o -name "*.go" -o -name "*.swift" -o -name "*.py" \) -not -path '*/.*')
+          
+          for file in $files; do
+            missing_reqs=0
+            
+            # Requirement 1: A line with both "Copyright" and "Jamf"
+            # We grep for Copyright, then pipe to grep for Jamf to ensure they are on the same line.
+            if ! grep "Copyright" "$file" | grep -q "Jamf"; then
+              echo "::error file=$file::Missing 'Copyright' and 'Jamf' on the same line."
+              missing_reqs=1
+            fi
+            
+            # Requirement 2: Specific license string
+            if ! grep -Fq "This work is licensed under the terms of the Jamf Source Available License" "$file"; then
+              echo "::error file=$file::Missing 'This work is licensed under the terms of the Jamf Source Available License'"
+              missing_reqs=1
+            fi
+            
+            # Requirement 3: License URL
+            if ! grep -Fq "https://github.com/jamf/scripts/blob/main/LICENCE.md" "$file"; then
+              echo "::error file=$file::Missing 'https://github.com/jamf/scripts/blob/main/LICENCE.md'"
+              missing_reqs=1
+            fi
+            
+            if [ $missing_reqs -eq 1 ]; then
+              failed=1
+            fi
+          done
+          
+          if [ $failed -eq 1 ]; then
+            echo "One or more files are missing required license headers."
+            exit 1
+          else
+            echo "All scanned files contain the required license headers."
+          fi
