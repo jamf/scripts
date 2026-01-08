@@ -2,44 +2,55 @@ name: CodeQL
 
 on:
   push:
-    branches: ["main", "master"]
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - '.github/**'
+    branches: [main]
   pull_request:
-    branches: ["main", "master"]
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - '.github/**'
-  schedule:
-    - cron: '39 5 * * 5'
+    # Analyze PRs targeting main
+    branches: [main]
 
 jobs:
-  analyze:
+  codeql:
     name: Analyze
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Initialize CodeQL with auto language detection (v4)
+      # Step 1: detect which languages exist in the repo
+      - name: Detect supported languages
+        id: detect
+        run: |
+          SUPPORTED_LANGS="python javascript cpp csharp java go ruby php"
+          DETECTED=""
+          for lang in $SUPPORTED_LANGS; do
+            case "$lang" in
+              python) EXT="py";;
+              javascript) EXT="js ts";;
+              cpp) EXT="c cpp c++ h hpp";;
+              csharp) EXT="cs";;
+              java) EXT="java";;
+              go) EXT="go";;
+              ruby) EXT="rb";;
+              php) EXT="php";;
+            esac
+            if git ls-files "*.$EXT" | grep -q .; then
+              DETECTED="$DETECTED $lang"
+            fi
+          done
+          DETECTED=$(echo $DETECTED | xargs)  # trim
+          echo "Detected languages: $DETECTED"
+          echo "::set-output name=langs::$DETECTED"
+
+      # Step 2: Only run CodeQL if at least one language is found
       - name: Initialize CodeQL
+        if: steps.detect.outputs.langs != ''
         uses: github/codeql-action/init@v4
         with:
-          languages: auto
+          languages: ${{ steps.detect.outputs.langs }}
 
-      # Autobuild attempts to build compiled languages; continue on error for script-only repos
       - name: Autobuild
+        if: steps.detect.outputs.langs != ''
         uses: github/codeql-action/autobuild@v4
-        continue-on-error: true
 
-      # Perform the CodeQL analysis
       - name: Perform CodeQL Analysis
+        if: steps.detect.outputs.langs != ''
         uses: github/codeql-action/analyze@v4
