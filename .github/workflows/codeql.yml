@@ -1,0 +1,88 @@
+name: "CodeQL Scan (PR-Incremental)"
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'   # ignore docs
+
+jobs:
+  detect-changes:
+    name: Detect PR Languages & Paths
+    runs-on: ubuntu-latest
+    outputs:
+      langs: ${{ steps.detect.outputs.langs }}
+      paths: ${{ steps.detect.outputs.paths }}
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # fetch full history
+
+      - name: Detect changed languages and folders
+        id: detect
+        run: |
+          SUPPORTED_LANGS="python javascript cpp csharp java go ruby php"
+          declare -A EXTENSIONS
+          EXTENSIONS=( 
+            [python]="py" 
+            [javascript]="js ts"
+            [csharp]="cs"
+            [go]="go"
+            [ruby]="rb"
+            [php]="php"
+          )
+
+          DETECTED_LANGS=""
+          DETECTED_PATHS=""
+
+          # List changed files in the PR
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+          for lang in $SUPPORTED_LANGS; do
+            for ext in ${EXTENSIONS[$lang]}; do
+              if echo "$CHANGED_FILES" | grep -E "\.${ext}$" >/dev/null; then
+                DETECTED_LANGS="$DETECTED_LANGS $lang"
+                break
+              fi
+            done
+          done
+
+          # Collect directories containing changed files (for path filters)
+          while read -r file; do
+            dir=$(dirname "$file")
+            DETECTED_PATHS="$DETECTED_PATHS $dir"
+          done <<< "$CHANGED_FILES"
+
+          DETECTED_LANGS=$(echo $DETECTED_LANGS | xargs)   # trim
+          DETECTED_PATHS=$(echo $DETECTED_PATHS | xargs | tr ' ' ',')  # comma-separated
+
+          echo "Languages detected: $DETECTED_LANGS"
+          echo "Paths to analyze: $DETECTED_PATHS"
+
+          echo "langs=$DETECTED_LANGS" >> $GITHUB_OUTPUT
+          echo "paths=$DETECTED_PATHS" >> $GITHUB_OUTPUT
+
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.langs != ''
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ needs.detect-changes.outputs.langs }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          debug: true
+          paths: ${{ needs.detect-changes.outputs.paths }}
+
+      - name: Build (if necessary)
+        run: |
+          # Add build commands here for compiled languages
+          echo "Build step (optional)"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
