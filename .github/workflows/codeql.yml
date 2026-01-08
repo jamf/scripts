@@ -1,4 +1,3 @@
-# .github/workflows/codeql.yml
 name: CodeQL
 
 on:
@@ -30,18 +29,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Initialize CodeQL with automatic language detection
+      # Initialize CodeQL with auto language detection (v4)
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: auto
-          # Optionally enable broader query sets:
-          # queries: security-extended,security-and-quality
 
-      # Autobuild attempts to build compiled languages when detected
+      # Autobuild attempts to build compiled languages; continue on error for script-only repos
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
         continue-on-error: true
 
+      # Perform the CodeQL analysis
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
