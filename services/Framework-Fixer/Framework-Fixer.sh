@@ -2,6 +2,7 @@
 
 ###########################################################################################################################
 #
+# Copyright 2025, Jamf Software LLC.
 # This work is licensed under the terms of the Jamf Source Available License
 # https://github.com/jamf/scripts/blob/main/LICENCE.md
 #
