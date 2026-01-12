@@ -1,4 +1,4 @@
-![alt text](https://github.com/Sdelsaz/Framework-Fixer/blob/main/Images/Framework-Fixer-icon.png?raw=true)
+![alt text](https://github.com/jamf/scripts/blob/main/services/Framework-Fixer/Images/Framework-Fixer-icon.png?raw=true)
 
 # Framework Fixer
 
@@ -12,13 +12,13 @@ This script uses Bart Reardon's swiftDialog for user dialogs and requires this u
 
 https://github.com/bartreardon/swiftDialog
 
-![alt text](https://github.com/Sdelsaz/Framework-Fixer/blob/main/Images/1.png?raw=true)
+![alt text](https://github.com/jamf/scripts/blob/main/services/Framework-Fixer/Images/1.png?raw=true)
 
-![alt text](https://github.com/Sdelsaz/Framework-Fixer/blob/main/Images/2.png?raw=true)
+![alt text](https://github.com/jamf/scripts/blob/main/services/Framework-Fixer/Images/2.png?raw=true)
 
-![alt text](https://github.com/Sdelsaz/Framework-Fixer/blob/main/Images/3.png?raw=true)
+![alt text](https://github.com/jamf/scripts/blob/main/services/Framework-Fixer/Images/3.png?raw=true)
 
-![alt text](https://github.com/Sdelsaz/Framework-Fixer/blob/main/Images/5.png?raw=true)
+![alt text](https://github.com/jamf/scripts/blob/main/services/Framework-Fixer/Images/5.png?raw=true)
 
 
 ## Note:
