@@ -38,7 +38,7 @@ touch ${log_file}
 # Dialog variables
 message_font="size=18,name=HelveticaNeue"
 title_font="weight=bold,size=30,name=HelveticaNeue-Bold"
-icon="https://raw.githubusercontent.com/Sdelsaz/Framework-Fixer/refs/heads/main/Images/Framework-Fixer-icon.png"
+icon="https://raw.githubusercontent.com/jamf/scripts/refs/heads/main/services/Framework-Fixer/Images/Framework-Fixer-icon.png"
 
 #######################################################################################################
 # Check if swiftDialog is installed. if not, inform the user of the prerequisites
