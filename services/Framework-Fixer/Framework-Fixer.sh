@@ -33,7 +33,7 @@ plutil_path="/usr/bin/plutil"
 log_file="/Users/Shared/Framework-Fixer.log"
 
 # Create the log_file
-touch ""${log_file}""
+touch "${log_file}"
 
 # Dialog variables
 message_font="size=18,name=HelveticaNeue"
