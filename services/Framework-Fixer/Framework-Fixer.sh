@@ -231,24 +231,57 @@ group_name_prompt() {
     # Check if the command was successful
     if [[ "${raw_JSON}" =~ ^(200|201|202|204)$ ]]
     then
-        raw_JSON=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
+        # Collect all group data
+        all_groups=()
+        page=0
+        page_size=100
+        total_count=0
+        
+        # Get first page to determine total count
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching page ${page} of Smart Computer Groups" >> "${log_file}"
+        page_response=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=${page}&page-size=${page_size}&sort=name:asc")
+        
+        # Extract total count
+        total_count=$(echo "${page_response}" | grep -o '"totalCount"[[:space:]]*:[[:space:]]*[0-9]*' | grep -o '[0-9]*')
+        
+        # Store the full first page response
+        raw_JSON="${page_response}"
+        
+        # If there are more than 100 entries, we need to fetch additional pages and merge results
+        if [[ ${total_count} -gt ${page_size} ]]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Found ${total_count} total groups, fetching all pages" >> "${log_file}"
+            
+            # Calculate total pages needed
+            total_pages=$(( (total_count + page_size - 1) / page_size ))
+            
+            # Create a temporary file to collect all results
+            temp_file=$(mktemp)
+            
+            # Extract names from first page
+            echo "${page_response}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' > "${temp_file}"
+            
+            # Loop through remaining pages and collect names
+            for (( page=1; page<total_pages; page++ )); do
+                echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching page ${page} of Smart Computer Groups" >> "${log_file}"
+                page_response=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=${page}&page-size=${page_size}&sort=name:asc")
+                
+                # Extract and append names from this page
+                echo "${page_response}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' >> "${temp_file}"
+            done
+            
+            # Read all group names from temp file
+            smart_group_names=$(cat "${temp_file}")
+            rm "${temp_file}"
+        else
+            # Single page, extract names directly
+            smart_group_names=$(echo "${raw_JSON}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+        fi
     else
         # If not, present an error message
         error_prompt
     fi
-    # Convert JSON to XML plist for xpath parsing
-    plist_data=$(echo "${raw_JSON}" | "${plutil_path}" -convert xml1 -o - - 2>/dev/null)
-    #  Check if plist contains data
-    if [[ -z "${plist_data}" ]]
-    then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Failed to convert JSON to plist" >> "${log_file}"
-        # If not, present an error message
-        error_prompt
-    fi
     
-    # Extract Smart Computer Group names
-    smart_group_names=$(echo "${plist_data}" | xpath -q -e "//key[text()='name']/following-sibling::string[1]/text()")
-    
+    # Check if we extracted group names successfully
     if [[ -z "${smart_group_names}" ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: No Smart Computer Groups found" >> "${log_file}"
