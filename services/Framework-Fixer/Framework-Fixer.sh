@@ -48,7 +48,7 @@ $(
 date '+%Y-%m-%d %H:%M:%S') INFO: Checking if swiftDialog is installed" >> "${log_file}"
 if [[ -e "${dialog_path}" ]]
 then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: swiftDialog i=s already installed" >> "${log_file}"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: swiftDialog is already installed" >> "${log_file}"
 else
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: swiftDialog not installed! Please install swiftDialog." >> "${log_file}"
     osascript <<'EOF'
@@ -105,7 +105,7 @@ auth_method_prompt() {
             --title "Framework Fixer" \
             --message 'Welcome!
 
-            Please select a method to authenticate to Jamf Pro. Click on "Required Privileges" for more information.' \
+Please select a method to authenticate to Jamf Pro. Click on "Required Privileges" for more information.' \
             --radio \
             --selecttitle "Please select an option",radio \
             --selectvalues "User Account & Password, API Client & Secret" \
@@ -123,7 +123,7 @@ auth_method_prompt() {
         invalidate_token
         exit 0
     fi
-    auth_selection=$(echo "${auth_method}" | awk -F '"' '{print $4}')
+    auth_selection=$(echo "${auth_method}" | grep "\"Please select an option\" : " | awk -F '"' '{print $4}')
     if [[ ${auth_selection} == "User Account & Password" ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Selected authentication method: User Account & Password" >> "${log_file}"
@@ -141,7 +141,7 @@ auth_method_prompt() {
 # Prompt for User Account and Password
 credential_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Prompting for credentials and server URL" >> "${log_file}"
-    if ! server_details=$(
+    if server_details=$(
         "${dialog_path}" \
             --title "Framework Fixer" \
             --message "Please enter your Jamf Pro details below:" \
@@ -157,9 +157,9 @@ credential_prompt() {
             --json
     )
     then
-        jamf_pro_url=$(echo "${server_details}" | ${plutil_path} -extract "Jamf Pro URL" xml1 -o - - | xmllint --xpath "string(//string)" -)
-        username=$(echo "${server_details}" | ${plutil_path} -extract "${username_label}" xml1 -o - - | xmllint --xpath "string(//string)" -)
-        api_password=$(echo "${server_details}" | ${plutil_path} -extract "${password_label}" xml1 -o - - | xmllint --xpath "string(//string)" -)
+        jamf_pro_url=$(echo "${server_details}" | "${plutil_path}" -extract "Jamf Pro URL" xml1 -o - - | xmllint --xpath "string(//string)" -)
+        username=$(echo "${server_details}" | "${plutil_path}" -extract "${username_label}" xml1 -o - - | xmllint --xpath "string(//string)" -)
+        api_password=$(echo "${server_details}" | "${plutil_path}" -extract "${password_label}" xml1 -o - - | xmllint --xpath "string(//string)" -)
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
         exit 0
@@ -187,7 +187,7 @@ invalid_credentials_prompt() {
 # Prompt to choose new or existing group
 group_option_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Prompting to choose between new group or existing group" >> "${log_file}"
-    if ! group_options=$(
+    if group_options=$(
         "${dialog_path}" \
             --title "Framework Fixer" \
             --message "Would you like to create a Smart Computer Group to redeploy the Jamf Management Framework to?" \
@@ -202,12 +202,13 @@ group_option_prompt() {
             --small
     )
     then
-        group_selection=$(echo "${group_options}" | awk -F '"' '{print $4}')
+        group_selection=$(echo "${group_options}" | grep "\"Please select an option\" : " | awk -F '"' '{print $4}')
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
         invalidate_token
         exit 0
     fi
+
     if [[ "${group_selection}" == "Please create a Smart Computer Group" ]]
     then
         # Prompt for number of days since last Inventory Update
@@ -235,7 +236,7 @@ group_name_prompt() {
         error_prompt
     fi
     # Convert JSON to XML plist for xpath parsing
-    plist_data=$(echo "${raw_JSON}" | ${plutil_path} -convert xml1 -o - - 2>/dev/null)
+    plist_data=$(echo "${raw_JSON}" | "${plutil_path}" -convert xml1 -o - - 2>/dev/null)
     #  Check if plist contains data
     if [[ -z ${plist_data} ]]
     then
@@ -258,7 +259,7 @@ group_name_prompt() {
 
     # Prompt user to select a Smart Computer Group from the list
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Prompting to choose a Smart Computer Group" >> "${log_file}"
-    if ! group_name=$(
+    if group_name=$(
         "${dialog_path}" \
             --title "Framework Fixer" \
             --message "Choose a Smart Computer Group from the list:" \
@@ -275,7 +276,7 @@ group_name_prompt() {
             --json
     )
     then
-        group_name=$(echo "${group_name}" | ${plutil_path} -extract SelectedOption raw -o - - 2>/dev/null) 
+        group_name=$(echo "${group_name}" | "${plutil_path}" -extract SelectedOption raw -o - - 2>/dev/null) 
         # Replace spaces with %20 for API call
         group_name2=${group_name// /%20}
     else
@@ -302,7 +303,7 @@ group_exists() {
 
 # Prompt for number of days since last Inventory Update
 days_prompt() {
-    if ! days=$(
+    if days=$(
         "${dialog_path}" \
             --title "Framework Fixer" \
             --message "OK, we will create a Smart Computer Group based on the number of days since the last Inventory Update. Please enter the number of days." \
@@ -317,7 +318,7 @@ days_prompt() {
             --json
     )
     then
-        days=$(echo "$days" | awk -F '"' '{print $4}')
+        days=$(echo "$days" | grep "\"Number of days\" : " | awk -F '"' '{print $4}')
         new_group_prompt
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: User clicked on 'Back'" >> "${log_file}"
@@ -328,7 +329,7 @@ days_prompt() {
 # Request the name of the Smart Computer Group to be created
 new_group_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Requesting the name for the new Smart Computer Group" >> "${log_file}"
-    if ! group_name=$(
+    if group_name=$(
         "${dialog_path}" \
             --title "Framework Fixer" \
             --message "Please enter a name for the new Smart Computer Group." \
@@ -342,7 +343,7 @@ new_group_prompt() {
             --json
     )
     then
-        group_name=$(echo "${group_name}" | ${plutil_path} -extract "Group Name" xml1 -o - - | xmllint --xpath "string(//string)" -)
+        group_name=$(echo "${group_name}" | "${plutil_path}" -extract "Group Name" xml1 -o - - | xmllint --xpath "string(//string)" -)
         # Replace spaces with %20 for API call
         group_name2=${group_name// /%20}
     else
@@ -434,7 +435,8 @@ redeployment_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "Cancel" \
-        --progress --indeterminate \
+        --progress \
+        --indeterminate \
         --commandfile "${command_file}" &
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
@@ -463,23 +465,22 @@ create_group() {
         }
 EOM
 
-# Create the Smart Computer Group
-echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Creating group called ${group_name}" >> "${log_file}"
-
-group_creation=$(check_response -X 'POST' "${jamf_pro_url}/api/v2/computer-groups/smart-groups" -H "accept: application/json" -H "Authorization: Bearer ${bearer_token}" -H "Content-Type: application/json" -d "${json_payload}" -b "${ap_balance_id}")
-if [[ $group_creation =~ ^(200|201|202|204)$ ]]
-then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Group called ${group_name} successfully created" >> "${log_file}"
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Group creation failed" >> "${log_file}"
-    error_prompt
-    invalidate_token
-    exit 1
-fi
+    # Create the Smart Computer Group
+    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Creating group called ${group_name}" >> "${log_file}"
+    group_creation=$(check_response -X 'POST' "${jamf_pro_url}/api/v2/computer-groups/smart-groups" -H "accept: application/json" -H "Authorization: Bearer ${bearer_token}" -H "Content-Type: application/json" -d "${json_payload}" -b "${ap_balance_id}")
+    if [[ $group_creation =~ ^(200|201|202|204)$ ]]
+    then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Group called ${group_name} successfully created" >> "${log_file}"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Group creation failed" >> "${log_file}"
+        error_prompt
+        invalidate_token
+        exit 1
+    fi
 }
 
 error_prompt() {
-    if ! "${dialog_path}" \
+    if "${dialog_path}" \
         --title "Framework Fixer" \
         --message "Oops! An error occurred. Please check ${log_file} for more details" \
         --icon "${icon}" \
@@ -501,7 +502,7 @@ done_prompt() {
         --title "Framework Fixer" \
         --message "We're done!  
 
-        The command to redeploy the Jamf Management Framework has been sent to all members of the Smart Computer Group." \
+The command to redeploy the Jamf Management Framework has been sent to all members of the Smart Computer Group." \
         --icon "${icon}" \
         --alignment "left" \
         --small \
@@ -520,9 +521,18 @@ token_expiration_epoch="0"
 get_bearer_token() {
     if [[ ${auth_method} == "user_creds" ]]
     then
-        response=$("${curl_path}" -s -u "${username}":"${api_password}" "${jamf_pro_url}"/api/v1/auth/token -X POST)
-        bearer_token=$(echo "${response}" | ${plutil_path} -extract token raw -)
-        token_expiration=$(echo "${response}" | ${plutil_path} -extract expires raw - | awk -F . '{print $1}')
+        response=$("${curl_path}" -s -u "${username}:${api_password}" "${jamf_pro_url}"/api/v1/auth/token -X POST)
+        bearer_token=$(echo "${response}" | "${plutil_path}" -extract token raw - 2>/dev/null)
+        # check token value was retrieved
+        if [[ -z "${bearer_token}" ]]
+        then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unable to retrieve bearer token" >> "${log_file}"
+            invalid_credentials_prompt
+            credential_prompt
+            get_bearer_token
+            return
+        fi
+        token_expiration=$(echo "${response}" | "${plutil_path}" -extract expires raw - 2>/dev/null | awk -F . '{print $1}')
         token_expiration_epoch=$(date -j -f "%Y-%m-%dT%T" "${token_expiration}" +"%s")
         check_token_expiration_prompt
     fi
@@ -534,8 +544,8 @@ get_bearer_token() {
         --data-urlencode "client_id=${username}" \
         --data-urlencode "grant_type=client_credentials" \
         --data-urlencode "client_secret=${api_password}")
-        bearer_token=$(echo "${response}" | ${plutil_path} -extract access_token raw -)
-        token_expiration=$(echo "${response}" | ${plutil_path} -extract expires_in raw -)
+        bearer_token=$(echo "${response}" | "${plutil_path}" -extract access_token raw -)
+        token_expiration=$(echo "${response}" | "${plutil_path}" -extract expires_in raw -)
         now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
         token_expiration_epoch=$((now_epoch_utc + token_expiration - 1))
         check_token_expiration_prompt
@@ -546,42 +556,43 @@ get_bearer_token() {
 }
 
 check_token_expiration_prompt() {
-now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
-if [[ $token_expiration_epoch -gt $now_epoch_utc ]]
-then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token valid until the following epoch time: " "${token_expiration_epoch}" >> "${log_file}"
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unable to validate server details/credentials" >> "${log_file}"
-    invalid_credentials_prompt
-    credential_prompt
-    get_bearer_token
+    now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
+
+    if [[ -n "$token_expiration_epoch" && ($token_expiration_epoch -gt $now_epoch_utc) ]] 
+    then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token valid until the following epoch time: " "${token_expiration_epoch}" >> "${log_file}"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unable to validate server details/credentials" >> "${log_file}"
+        invalid_credentials_prompt
+        credential_prompt
+        get_bearer_token
     fi
 }
 
 check_token_expiration() {
-now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
-if [[ $token_expiration_epoch -gt $now_epoch_utc ]]
-then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token valid until the following epoch time: " "${token_expiration_epoch}" >> "${log_file}"
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: No token available. Getting new token." >> "${log_file}"
-    get_bearer_token
-fi
+    now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
+    if [[ $token_expiration_epoch -gt $now_epoch_utc ]]
+    then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token valid until the following epoch time: " "${token_expiration_epoch}" >> "${log_file}"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: No token available. Getting new token." >> "${log_file}"
+        get_bearer_token
+    fi
 }
 
 invalidate_token() {
-response_code=$("${curl_path}" -w "%{http_code}" -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v1/auth/invalidate-token" -X POST -s -o /dev/null)
-if [[ ${response_code} == 204 ]]
-then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token successfully invalidated" >> "${log_file}"
-    bearer_token=""
-    token_expiration_epoch="0"
-elif [[ ${response_code} == 401 ]]
-then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token already invalid" >> "${log_file}"
-else
-    echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: An unknown error occurred invalidating the token" >> "${log_file}"
-fi
+    response_code=$("${curl_path}" -w "%{http_code}" -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v1/auth/invalidate-token" -X POST -s -o /dev/null)
+    if [[ ${response_code} == 204 ]]
+    then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token successfully invalidated" >> "${log_file}"
+        bearer_token=""
+        token_expiration_epoch="0"
+    elif [[ ${response_code} == 401 ]]
+    then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Token already invalid" >> "${log_file}"
+    else
+        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: An unknown error occurred invalidating the token" >> "${log_file}"
+    fi
 }
 
 #######################################################################################################
