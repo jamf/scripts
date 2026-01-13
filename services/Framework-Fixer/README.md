@@ -4,7 +4,7 @@
 
 A script to help re-deploy the Jamf Pro Framework to a Smart Computer Group. An existing Smart Computer Group can be can used or a new one can be created.  The new Smart Computer Group will use the number of days since the last inventory update as criteria. A prompt will ask for the number of days to use for the criteria. 
 
-This script leverages the Jamf Pro API and is to be run on an administrator's mac, it is not meant to be deployed using Jamf Pro.  The script must be run as root. Prompts are used to gather the server details and credentials for the API calls.  A Jamf Pro Username/password or an API Client/Secret can be used to generate the token.
+This script leverages the Jamf Pro API and is to be run on an administrator's mac, it is not meant to be deployed using Jamf Pro. Prompts are used to gather the server details and credentials for the API calls.  A Jamf Pro Username/password or an API Client/Secret can be used to generate the token.
 
 Logs are written to /Users/Shared/Framework-Fixer.log
 
