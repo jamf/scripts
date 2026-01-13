@@ -52,16 +52,16 @@ then
 else
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: swiftDialog not installed! Please install swiftDialog." >> "${log_file}"
     osascript <<'EOF'
-set userChoice to button returned of (display alert ¬
-"swiftDialog Missing" ¬
-message "swiftDialog is not installed. This tool is a requirement for this script. Would you like to download the latest version?" ¬
-buttons {"Cancel", "Download"} ¬
-as critical)
-
-if userChoice is "Download" then
-open location "https://github.com/swiftDialog/swiftDialog/releases/latest"
-else
-end if
+    set userChoice to button returned of (display alert ¬
+    "swiftDialog Missing" ¬
+    message "swiftDialog is not installed. This tool is a requirement for this script. Would you like to download the latest version?" ¬
+    buttons {"Cancel", "Download"} ¬
+    as critical)
+    
+    if userChoice is "Download" then
+    open location "https://github.com/swiftDialog/swiftDialog/releases/latest"
+    else
+    end if
 EOF
     exit 1
 fi
@@ -74,24 +74,25 @@ fi
 check_response() {
     local http_code
     http_code=$("${curl_path}" -s -o /dev/null -w "%{http_code}" "$@")
-
-    if [[ ${http_code} =~ ^(200|201|202|204)$ ]]
+    
+    if [[ "${http_code}" =~ ^(200|201|202|204)$ ]]
     then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Command successfully sent: HTTP code: ${http_code}" >> "${log_file}"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Command successfully sent: HTTP code: ${http_code}" >> "${log_file}"
     else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Command failed with HTTP error ${http_code}" >> "${log_file}"
-        case ${http_code} in
-            400) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Bad Request" >> "${log_file}" ;;
-            401) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unauthorized - check your credentials." >> "${log_file}" ;;
-            403) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Forbidden - Insufficient privileges." >> "${log_file}" ;;
-            404) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Not Found - resource does not exist." >> "${log_file}" ;;
-            409) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Conflict - resource may already exist." >> "${log_file}" ;;
-            500) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Server Error - try again later." >> "${log_file}" ;;
-            *)   echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unexpected HTTP response: ${http_code}" >> "${log_file}" ;;
-        esac
+    echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Command failed with HTTP error ${http_code}" >> "${log_file}"
+    case "${http_code}" in
+    400) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Bad Request" >> "${log_file}" ;;
+    401) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unauthorized – check your credentials." >> "${log_file}" ;;
+    403) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Forbidden – Insufficient privileges." >> "${log_file}" ;;
+    404) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Not Found – resource does not exist." >> "${log_file}" ;;
+    409) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Conflict – resource may already exist." >> "${log_file}" ;;
+    500) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Server Error – try again later." >> "${log_file}" ;;
+    *)   echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unexpected HTTP response: ${http_code}" >> "${log_file}" ;;
+    esac
     fi
     echo "${http_code}"
 }
+
 
 #######################################################################################################
 # Prompt functions
@@ -173,15 +174,15 @@ credential_prompt() {
 # Prompt explaining there was an issue with the server details/credentials
 invalid_credentials_prompt() {
     "${dialog_path}" \
-        --title "Framework Fixer" \
-        --message "Oops! We were unable to validate the provided URL or credentials. Please make sure that the server is reachable and that the server URL and credentials are correct." \
-        --icon "${icon}" \
-        --overlayicon "caution" \
-        --alignment "left" \
-        --small \
-        --messagefont "${message_font}" \
-        --titlefont "${title_font}" \
-        --button1text "OK"
+    --title "Framework Fixer" \
+    --message "Oops! We were unable to validate the provided URL or credentials. Please make sure that the server is reachable and that the server URL and credentials are correct." \
+    --icon "${icon}" \
+    --overlayicon "caution" \
+    --alignment "left" \
+    --small \
+    --messagefont "${message_font}" \
+    --titlefont "${title_font}" \
+    --button1text "OK"
 }
 
 # Prompt to choose new or existing group
@@ -225,10 +226,10 @@ group_name_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Existing group workflow selected." >> "${log_file}"
     # Fetch all Smart Computer Groups
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching all Smart Computer Groups" >> "${log_file}"
-
+    
     raw_JSON=$(check_response -X 'GET' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
     # Check if the command was successful
-    if [[ ${raw_JSON} =~ ^(200|201|202|204)$ ]]
+    if [[ "${raw_JSON}" =~ ^(200|201|202|204)$ ]]
     then
         raw_JSON=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
     else
@@ -238,25 +239,25 @@ group_name_prompt() {
     # Convert JSON to XML plist for xpath parsing
     plist_data=$(echo "${raw_JSON}" | "${plutil_path}" -convert xml1 -o - - 2>/dev/null)
     #  Check if plist contains data
-    if [[ -z ${plist_data} ]]
+    if [[ -z "${plist_data}" ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Failed to convert JSON to plist" >> "${log_file}"
         # If not, present an error message
         error_prompt
     fi
-
+    
     # Extract Smart Computer Group names
     smart_group_names=$(echo "${plist_data}" | xpath -q -e "//key[text()='name']/following-sibling::string[1]/text()")
-
-    if [[ -z ${smart_group_names} ]]
+    
+    if [[ -z "${smart_group_names}" ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: No Smart Computer Groups found" >> "${log_file}"
         error_prompt
     fi
-
+    
     # Convert newline-separated list to comma-separated list
     group_list=$(echo "${smart_group_names}" | tr '\n' ',' | sed 's/,$//')
-
+    
     # Prompt user to select a Smart Computer Group from the list
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Prompting to choose a Smart Computer Group" >> "${log_file}"
     if group_name=$(
@@ -278,7 +279,7 @@ group_name_prompt() {
     then
         group_name=$(echo "${group_name}" | "${plutil_path}" -extract SelectedOption raw -o - - 2>/dev/null) 
         # Replace spaces with %20 for API call
-        group_name2=${group_name// /%20}
+        group_name2=$(echo "${group_name}" | sed 's/ /%20/g')
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: User clicked on 'Back'" >> "${log_file}"
         group_option_prompt
@@ -288,16 +289,16 @@ group_name_prompt() {
 # Prompt explaining a group with the provided name already exists
 group_exists() {
     "${dialog_path}" \
-        --title "Framework Fixer" \
-        --message "Oops! It looks like there is already a Smart Computer Group called ${group_name}" \
-        --icon "${icon}" \
-        --overlayicon "caution" \
-        --alignment "left" \
-        --small \
-        --messagefont "${message_font}" \
-        --titlefont "${title_font}" \
-        --button1text "OK"
-
+    --title "Framework Fixer" \
+    --message "Oops! It looks like there is already a Smart Computer Group called ${group_name}" \
+    --icon "${icon}" \
+    --overlayicon "caution" \
+    --alignment "left" \
+    --small \
+    --messagefont "${message_font}" \
+    --titlefont "${title_font}" \
+    --button1text "OK"
+    
     new_group_prompt
 }
 
@@ -345,7 +346,7 @@ new_group_prompt() {
     then
         group_name=$(echo "${group_name}" | "${plutil_path}" -extract "Group Name" xml1 -o - - | xmllint --xpath "string(//string)" -)
         # Replace spaces with %20 for API call
-        group_name2=${group_name// /%20}
+        group_name2=$(echo "${group_name}" | sed 's/ /%20/g')
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
         invalidate_token
@@ -367,7 +368,7 @@ new_group_prompt() {
         invalidate_token
         exit 1
     fi
-
+    
     if [[ "$count" -eq 1 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: There is already a Smart Computer Group named ${group_name}" >> "$log_file"
@@ -379,15 +380,16 @@ new_group_prompt() {
 
 # Prompt to indicate there are no members in the Smart Computer Group
 no_members_prompt() {
-    if ! "${dialog_path}" \
-        --title "Framework Fixer" \
-        --message "There are 0 members in this Smart Computer Group.  No action required." \
-        --icon "${icon}" \
-        --alignment "left" \
-        --small \
-        --messagefont "${message_font}" \
-        --titlefont "${title_font}" \
-        --button1text "OK"
+    "${dialog_path}" \
+    --title "Framework Fixer" \
+    --message "There are 0 members in this Smart Computer Group.  No action required." \
+    --icon "${icon}" \
+    --alignment "left" \
+    --small \
+    --messagefont "${message_font}" \
+    --titlefont "${title_font}" \
+    --button1text "OK"
+    if [[ $? != 0 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
         invalidate_token
@@ -398,19 +400,18 @@ no_members_prompt() {
 
 # Show number of devices in the Smart Computer Group and ask if we should remediate
 remediation_prompt() {
-    if ! remediation_check=$(
-        "${dialog_path}" \
-            --title "Framework Fixer" \
-            --message "There are ${member_count} members in the Smart Computer Group.  Would you like to redeploy the Jamf Management Framework on all computers in this group?" \
-            --icon "${icon}" \
-            --alignment "left" \
-            --small \
-            --button1text "No" \
-            --button2text "Yes" \
-            --messagefont "${message_font}" \
-            --titlefont "${title_font}" \
-            --json
-    )
+    remediation_check=$("${dialog_path}" \
+    --title "Framework Fixer" \
+    --message "There are ${member_count} members in the Smart Computer Group.  Would you like to redeploy the Jamf Management Framework on all computers in this group?" \
+    --icon "${icon}" \
+    --alignment "left" \
+    --small \
+    --button1text "No" \
+    --button2text "Yes" \
+    --messagefont "${message_font}" \
+    --titlefont "${title_font}" \
+    --json)
+    if [[ $? == 2 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Remediation choice: yes" >> "${log_file}"
         remediation_check="Yes"
@@ -418,7 +419,7 @@ remediation_prompt() {
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Remediation choice: No. Exiting." >> "${log_file}"
         invalidate_token
         exit 0
-fi
+    fi
 }
 
 redeployment_prompt() {
@@ -448,21 +449,21 @@ redeployment_prompt() {
 create_group() {
     # JSON payload for the smart group
     read -r -d '' json_payload << EOM
-        {
-        "name": "${group_name}",
-        "criteria": [
-                {
-                "name": "Last Inventory Update",
-                "priority": 0,
-                "andOr": "and",
-                "searchType": "more than x days ago",
-                "value": "${days}",
-                "openingParen": false,
-                "closingParen": false
-                }
-        ],
-        "siteId": "-1"
-        }
+    {
+    "name": "${group_name}",
+    "criteria": [
+            {
+            "name": "Last Inventory Update",
+            "priority": 0,
+            "andOr": "and",
+            "searchType": "more than x days ago",
+            "value": "${days}",
+            "openingParen": false,
+            "closingParen": false
+            }
+    ],
+    "siteId": "-1"
+    }
 EOM
 
     # Create the Smart Computer Group
@@ -500,9 +501,7 @@ error_prompt() {
 done_prompt() {
     "${dialog_path}" \
         --title "Framework Fixer" \
-        --message "We're done!  
-
-The command to redeploy the Jamf Management Framework has been sent to all members of the Smart Computer Group." \
+        --message "We're done!\n\nThe command to redeploy the Jamf Management Framework has been sent to all members of the Smart Computer Group." \
         --icon "${icon}" \
         --alignment "left" \
         --small \
@@ -519,7 +518,7 @@ bearer_token=""
 token_expiration_epoch="0"
 
 get_bearer_token() {
-    if [[ ${auth_method} == "user_creds" ]]
+    if [[ "${auth_method}" == "user_creds" ]]
     then
         response=$("${curl_path}" -s -u "${username}:${api_password}" "${jamf_pro_url}"/api/v1/auth/token -X POST)
         bearer_token=$(echo "${response}" | "${plutil_path}" -extract token raw - 2>/dev/null)
@@ -536,10 +535,9 @@ get_bearer_token() {
         token_expiration_epoch=$(date -j -f "%Y-%m-%dT%T" "${token_expiration}" +"%s")
         check_token_expiration_prompt
     fi
-    if [[ ${auth_method} == "client_secret" ]]
+    if [[ "${auth_method}" == "client_secret" ]]
     then
-        response=$(
-            "${curl_path}" --silent --location --request POST "${jamf_pro_url}/api/oauth/token" \
+        response=$("${curl_path}" --silent --location --request POST "${jamf_pro_url}/api/oauth/token" \
         --header "Content-Type: application/x-www-form-urlencoded" \
         --data-urlencode "client_id=${username}" \
         --data-urlencode "grant_type=client_credentials" \
@@ -547,10 +545,10 @@ get_bearer_token() {
         bearer_token=$(echo "${response}" | "${plutil_path}" -extract access_token raw -)
         token_expiration=$(echo "${response}" | "${plutil_path}" -extract expires_in raw -)
         now_epoch_utc=$(date -j -f "%Y-%m-%dT%T" "$(date -u +"%Y-%m-%dT%T")" +"%s")
-        token_expiration_epoch=$((now_epoch_utc + token_expiration - 1))
+        token_expiration_epoch=$((${now_epoch_utc} + ${token_expiration} - 1))
         check_token_expiration_prompt
     fi
-
+    
     # Extract APBALANCEID from headers for sticky session handling
     ap_balance_id=$(echo "${response}" | grep -i 'Set-Cookie:' | grep -o 'APBALANCEID=[^;]*' | head -1)
 }
@@ -610,13 +608,15 @@ group_option_prompt
 
 # Get the members of the Smart Computer Group
 echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Checking members of the group" >> "${log_file}"
-member_list=$("${curl_path}" -X 'GET' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/JSSResource/computergroups/name/${group_name2}" -H "accept: application/xml" -b "${ap_balance_id}" | xmllint --format - | grep -A3 "<computer>" | awk -F '[<>]' '/id/{print $3}')
+member_list=$("${curl_path}" -X 'GET' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/JSSResource/computergroups/name/${group_name2}" -H "accept: application/xml" -b "${ap_balance_id}" |  xmllint --format - |  grep -A3 "<computer>" | awk -F '[<>]' '/id/{print $3}')
 
 # Count the members
-member_count=$(echo "${member_list}" | wc -l | tr -d ' ')
+member_count="0"
+# Count the members using word count
+member_count=$(echo "${member_list}" | wc -w | tr -d ' ')
 
 # Prompt explaining no computers were found
-if [[ -z "${member_list}" ]]
+if [[ -z ${member_list} ]]
 then
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: There are 0 members in the group" >> "${log_file}"
     no_members_prompt
@@ -654,3 +654,4 @@ fi
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Done!" >> "${log_file}"
     done_prompt
 fi
+exit 0
