@@ -174,15 +174,15 @@ credential_prompt() {
 # Prompt explaining there was an issue with the server details/credentials
 invalid_credentials_prompt() {
     "${dialog_path}" \
-    --title "Framework Fixer" \
-    --message "Oops! We were unable to validate the provided URL or credentials. Please make sure that the server is reachable and that the server URL and credentials are correct." \
-    --icon "${icon}" \
-    --overlayicon "caution" \
-    --alignment "left" \
-    --small \
-    --messagefont "${message_font}" \
-    --titlefont "${title_font}" \
-    --button1text "OK"
+        --title "Framework Fixer" \
+        --message "Oops! We were unable to validate the provided URL or credentials. Please make sure that the server is reachable and that the server URL and credentials are correct." \
+        --icon "${icon}" \
+        --overlayicon "caution" \
+        --alignment "left" \
+        --small \
+        --messagefont "${message_font}" \
+        --titlefont "${title_font}" \
+        --button1text "OK"
 }
 
 # Prompt to choose new or existing group
@@ -289,15 +289,15 @@ group_name_prompt() {
 # Prompt explaining a group with the provided name already exists
 group_exists() {
     "${dialog_path}" \
-    --title "Framework Fixer" \
-    --message "Oops! It looks like there is already a Smart Computer Group called ${group_name}" \
-    --icon "${icon}" \
-    --overlayicon "caution" \
-    --alignment "left" \
-    --small \
-    --messagefont "${message_font}" \
-    --titlefont "${title_font}" \
-    --button1text "OK"
+        --title "Framework Fixer" \
+        --message "Oops! It looks like there is already a Smart Computer Group called ${group_name}" \
+        --icon "${icon}" \
+        --overlayicon "caution" \
+        --alignment "left" \
+        --small \
+        --messagefont "${message_font}" \
+        --titlefont "${title_font}" \
+        --button1text "OK"
     
     new_group_prompt
 }
@@ -381,14 +381,14 @@ new_group_prompt() {
 # Prompt to indicate there are no members in the Smart Computer Group
 no_members_prompt() {
     "${dialog_path}" \
-    --title "Framework Fixer" \
-    --message "There are 0 members in this Smart Computer Group.  No action required." \
-    --icon "${icon}" \
-    --alignment "left" \
-    --small \
-    --messagefont "${message_font}" \
-    --titlefont "${title_font}" \
-    --button1text "OK"
+        --title "Framework Fixer" \
+        --message "There are 0 members in this Smart Computer Group.  No action required." \
+        --icon "${icon}" \
+        --alignment "left" \
+        --small \
+        --messagefont "${message_font}" \
+        --titlefont "${title_font}" \
+        --button1text "OK"
     if [[ $? != 0 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
@@ -400,17 +400,19 @@ no_members_prompt() {
 
 # Show number of devices in the Smart Computer Group and ask if we should remediate
 remediation_prompt() {
-    remediation_check=$("${dialog_path}" \
-    --title "Framework Fixer" \
-    --message "There are ${member_count} members in the Smart Computer Group.  Would you like to redeploy the Jamf Management Framework on all computers in this group?" \
-    --icon "${icon}" \
-    --alignment "left" \
-    --small \
-    --button1text "No" \
-    --button2text "Yes" \
-    --messagefont "${message_font}" \
-    --titlefont "${title_font}" \
-    --json)
+    remediation_check=$(
+        "${dialog_path}" \
+        --title "Framework Fixer" \
+        --message "There are ${member_count} members in the Smart Computer Group.  Would you like to redeploy the Jamf Management Framework on all computers in this group?" \
+        --icon "${icon}" \
+        --alignment "left" \
+        --small \
+        --button1text "No" \
+        --button2text "Yes" \
+        --messagefont "${message_font}" \
+        --titlefont "${title_font}" \
+        --json
+    )
     if [[ $? == 2 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Remediation choice: yes" >> "${log_file}"
