@@ -232,7 +232,6 @@ group_name_prompt() {
     if [[ "${raw_JSON}" =~ ^(200|201|202|204)$ ]]
     then
         # Collect all group data
-        all_groups=()
         page=0
         page_size=100
         total_count=0
