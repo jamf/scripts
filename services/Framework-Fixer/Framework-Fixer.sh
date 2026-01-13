@@ -51,17 +51,17 @@ then
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: swiftDialog i=s already installed" >> "${log_file}"
 else
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: swiftDialog not installed! Please install swiftDialog." >> "${log_file}"
-osascript <<'EOF'
-set userChoice to button returned of (display alert ¬
-"swiftDialog Missing" ¬
-message "swiftDialog is not installed. This tool is a requirement for this script. Would you like to download the latest version?" ¬
-buttons {"Cancel", "Download"} ¬
-as critical)
-
-if userChoice is "Download" then
-open location "https://github.com/swiftDialog/swiftDialog/releases/latest"
-else
-end if
+    osascript <<'EOF'
+    set userChoice to button returned of (display alert ¬
+    "swiftDialog Missing" ¬
+    message "swiftDialog is not installed. This tool is a requirement for this script. Would you like to download the latest version?" ¬
+    buttons {"Cancel", "Download"} ¬
+    as critical)
+    
+    if userChoice is "Download" then
+    open location "https://github.com/swiftDialog/swiftDialog/releases/latest"
+    else
+    end if
 EOF
     exit 1
 fi
@@ -438,7 +438,7 @@ redeployment_prompt() {
 
 create_group() {
     # JSON payload for the smart group
-read -r -d '' json_payload << EOM
+    read -r -d '' json_payload << EOM
     {
     "name": "${group_name}",
     "criteria": [
@@ -455,7 +455,6 @@ read -r -d '' json_payload << EOM
     "siteId": "-1"
     }
 EOM
-
     # Create the Smart Computer Group
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Creating group called ${group_name}" >> "${log_file}"
     
