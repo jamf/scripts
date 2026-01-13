@@ -82,11 +82,11 @@ check_response() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Command failed with HTTP error ${http_code}" >> "${log_file}"
     case "${http_code}" in
     400) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Bad Request" >> "${log_file}" ;;
-    401) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unauthorized – check your credentials." >> "${log_file}" ;;
-    403) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Forbidden – Insufficient privileges." >> "${log_file}" ;;
-    404) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Not Found – resource does not exist." >> "${log_file}" ;;
-    409) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Conflict – resource may already exist." >> "${log_file}" ;;
-    500) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Server Error – try again later." >> "${log_file}" ;;
+    401) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unauthorized - check your credentials." >> "${log_file}" ;;
+    403) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Forbidden - Insufficient privileges." >> "${log_file}" ;;
+    404) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Not Found - resource does not exist." >> "${log_file}" ;;
+    409) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Conflict - resource may already exist." >> "${log_file}" ;;
+    500) echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Server Error - try again later." >> "${log_file}" ;;
     *)   echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: Unexpected HTTP response: ${http_code}" >> "${log_file}" ;;
     esac
     fi
@@ -654,4 +654,3 @@ fi
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Done!" >> "${log_file}"
     done_prompt
 fi
-exit 0
