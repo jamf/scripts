@@ -117,7 +117,8 @@ Please select a method to authenticate to Jamf Pro. Click on "Required Privilege
             --titlefont "${title_font}" \
             --infobuttontext "Required Privileges" \
             --infobuttonaction "https://github.com/Sdelsaz/Framework-Fixer?tab=readme-ov-file#requirements" \
-            --small
+            --small \
+            --height "400"
     )
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
@@ -155,6 +156,7 @@ credential_prompt() {
             --button2 \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
+            --height "400" \
             --json
     )
     then
@@ -182,7 +184,8 @@ invalid_credentials_prompt() {
         --small \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --button1text "OK"
+        --button1text "OK" \
+        --height "400"
 }
 
 # Prompt to choose new or existing group
@@ -200,7 +203,8 @@ group_option_prompt() {
             --button2 \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
-            --small
+            --small \
+            --height "400"
     )
     then
         group_selection=$(echo "${group_options}" | grep "\"Please select an option\" : " | awk -F '"' '{print $4}')
@@ -306,6 +310,7 @@ group_name_prompt() {
             --selecttitle "Smart Computer Group" \
             --selectvalues "${group_list}" \
             --button1text "Select" \
+            --height "400" \
             --json
     )
     then
@@ -329,7 +334,8 @@ group_exists() {
         --small \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --button1text "OK"
+        --button1text "OK" \
+        --height "400"
     
     new_group_prompt
 }
@@ -348,6 +354,7 @@ days_prompt() {
             --button2text "Back" \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
+            --height "400" \
             --json
     )
     then
@@ -373,6 +380,7 @@ new_group_prompt() {
             --button2 \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
+            --height "400" \
             --json
     )
     then
@@ -420,7 +428,8 @@ no_members_prompt() {
         --small \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --button1text "OK"
+        --button1text "OK" \
+        --height "400"
     if [[ $? != 0 ]]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
@@ -443,6 +452,7 @@ remediation_prompt() {
         --button2text "Yes" \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
+        --height "400" \
         --json
     )
     if [[ $? == 2 ]]
@@ -470,6 +480,7 @@ redeployment_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "Cancel" \
+        --height "400" \
         --progress \
         --indeterminate \
         --commandfile "${command_file}" &
@@ -524,7 +535,8 @@ error_prompt() {
         --small \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --button1text "OK"
+        --button1text "OK" \
+        --height "400"
     then
         invalidate_token
         exit 1
@@ -541,7 +553,8 @@ done_prompt() {
         --small \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --button1text "OK"
+        --button1text "OK" \
+        --height "400"
 }
 
 #######################################################################################################
