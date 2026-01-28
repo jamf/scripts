@@ -29,6 +29,7 @@ When reinstalling the Jamf management framework via this endpoint, Jamf Pro will
 ## Requirements:
 
 - swiftDialog: https://github.com/bartreardon/swiftDialog
+- jq command-line JSON processor (included in macOS 15+)
 - Jamf Pro 10.36 or later
 - A valid MDM profile and network connection on the target computer
 - A Jamf Pro User Account or API Role & Client with the following privileges:
