@@ -116,7 +116,7 @@ Please select a method to authenticate to Jamf Pro. Click on "Required Privilege
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
             --infobuttontext "Required Privileges" \
-            --infobuttonaction "https://github.com/Sdelsaz/Framework-Fixer?tab=readme-ov-file#requirements" \
+            --infobuttonaction "https://github.com/jamf/scripts/services/Framework-Fixer/?tab=readme-ov-file#requirements" \
             --small \
             --height "400"
     )
@@ -228,116 +228,81 @@ group_option_prompt() {
 # Prompt for group selection
 group_name_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Existing group workflow selected." >> "${log_file}"
-    # Fetch all Smart Computer Groups
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching all Smart Computer Groups" >> "${log_file}"
     
-    raw_JSON=$(check_response -X 'GET' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
-    # Check if the command was successful
-    if [[ "${raw_JSON}" =~ ^(200|201|202|204)$ ]]
-    then
-        # Collect all group data
-        page=0
-        page_size=100
-        total_count=0
-        
-        # Get first page to determine total count
+    # Initial check (same as original)
+    http_code=$(check_response -X GET -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
+    
+    if ! echo "${http_code}" | grep -Eq '^(200|201|202|204)$'; then
+        error_prompt
+    fi
+    
+    page=0
+    page_size=100
+    tmp_groups="$(mktemp)"
+    echo "[]" > "${tmp_groups}"
+    
+    while : ; do
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching page ${page} of Smart Computer Groups" >> "${log_file}"
+        
+        # Original-style data fetch
         page_response=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=${page}&page-size=${page_size}&sort=name:asc")
         
-        # Extract total count
-        total_count=$(echo "${page_response}" | grep -o '"totalCount"[[:space:]]*:[[:space:]]*[0-9]*' | grep -o '[0-9]*')
+        # Minimal change: jq instead of grep/sed
+        echo "${page_response}" \
+        | jq '[.results[].name]' > /tmp/page_groups.json
         
-        # Store the full first page response
-        raw_JSON="${page_response}"
+        jq -s 'add' "${tmp_groups}" /tmp/page_groups.json > "${tmp_groups}.new" \
+        && mv "${tmp_groups}.new" "${tmp_groups}"
         
-        # If there are more than 100 entries, we need to fetch additional pages and merge results
-        if [[ ${total_count} -gt ${page_size} ]]; then
-            echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Found ${total_count} total groups, fetching all pages" >> "${log_file}"
-            
-            # Calculate total pages needed
-            total_pages=$(( (total_count + page_size - 1) / page_size ))
-            
-            # Create a temporary file to collect all results
-            temp_file=$(mktemp)
-            
-            # Extract names from first page
-            echo "${page_response}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' > "${temp_file}"
-            
-            # Loop through remaining pages and collect names
-            for (( page=1; page<total_pages; page++ )); do
-                echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching page ${page} of Smart Computer Groups" >> "${log_file}"
-                page_response=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=${page}&page-size=${page_size}&sort=name:asc")
-                
-                # Extract and append names from this page
-                echo "${page_response}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' >> "${temp_file}"
-            done
-            
-            # Read all group names from temp file
-            smart_group_names=$(cat "${temp_file}")
-            rm "${temp_file}"
-        else
-            # Single page, extract names directly
-            smart_group_names=$(echo "${raw_JSON}" | grep '"name"[[:space:]]*:' | sed 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
-        fi
-    else
-        # If not, present an error message
-        error_prompt
-    fi
+        total_count=$(echo "${page_response}" | jq '.totalCount')
+        
+        current_count=$(( (page + 1) * page_size ))
+        [ "${current_count}" -ge "${total_count}" ] && break
+        
+        page=$((page + 1))
+    done
     
-    # Check if we extracted group names successfully
-    if [[ -z "${smart_group_names}" ]]
-    then
+    if [ "$(jq 'length' "${tmp_groups}")" -eq 0 ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: No Smart Computer Groups found" >> "${log_file}"
+        rm -f "${tmp_groups}"
         error_prompt
     fi
     
-    # Convert newline-separated list to comma-separated list
-    group_list=$(echo "${smart_group_names}" | tr '\n' ',' | sed 's/,$//')
+    # SwiftDialog JSON (only change vs original selectvalues)
+    dialog_json="$(mktemp)"
     
-    # Prompt user to select a Smart Computer Group from the list
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Prompting to choose a Smart Computer Group" >> "${log_file}"
-    if group_name=$(
-        "${dialog_path}" \
-            --title "Framework Fixer" \
-            --message "Choose a Smart Computer Group from the list:" \
-            --icon "${icon}" \
-            --alignment "left" \
-            --small \
-            --button2 \
-            --button2text "Back" \
-            --messagefont "${message_font}" \
-            --titlefont "${title_font}" \
-            --selecttitle "Smart Computer Group" \
-            --selectvalues "${group_list}" \
-            --button1text "Select" \
-            --height "400" \
-            --json
-    )
-    then
-        group_name=$(echo "${group_name}" | "${plutil_path}" -extract SelectedOption raw -o - - 2>/dev/null) 
-        # Replace spaces with %20 for API call
-        group_name2=$(echo "${group_name}" | sed 's/ /%20/g')
-    else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: User clicked on 'Back'" >> "${log_file}"
+    jq -n \
+    --arg title "Framework Fixer" \
+    --arg message "Choose a Smart Computer Group from the list:" \
+    --arg icon "${icon}" \
+    --slurpfile values "${tmp_groups}" \
+    '{
+title: $title,
+message: $message,
+icon: $icon,
+alignment: "left",
+small: true,
+button1text: "Select",
+button2text: "Back",
+selecttitle: "Smart Computer Group",
+selectvalues: $values[0]
+}' > "${dialog_json}"
+    
+    dialog_output=$(
+"${dialog_path}" \
+--json \
+--jsonfile "${dialog_json}"
+) || {
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: User clicked Back" >> "${log_file}"
+        rm -f "${tmp_groups}" "${dialog_json}"
         group_option_prompt
-    fi
-}
-
-# Prompt explaining a group with the provided name already exists
-group_exists() {
-    "${dialog_path}" \
-        --title "Framework Fixer" \
-        --message "Oops! It looks like there is already a Smart Computer Group called ${group_name}" \
-        --icon "${icon}" \
-        --overlayicon "caution" \
-        --alignment "left" \
-        --small \
-        --messagefont "${message_font}" \
-        --titlefont "${title_font}" \
-        --button1text "OK" \
-        --height "400"
+        return
+    }
     
-    new_group_prompt
+    group_name=$(echo "${dialog_output}" | jq -r '.SelectedOption')
+    group_name2=$(printf '%s' "${group_name}" | jq -sRr @uri)
+    
+    rm -f "${tmp_groups}" "${dialog_json}" /tmp/page_groups.json
 }
 
 # Prompt for number of days since last Inventory Update
@@ -394,12 +359,15 @@ new_group_prompt() {
     fi
     # Check to make sure we are able to verify the existence of the group
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Checking if a group called ${group_name} already exists" >> "${log_file}"
-    group_check=$(check_response -X 'GET' "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=0&page-size=100&sort=id%3Aasc&filter=name%3D%3D%22${group_name2}%22" -H "accept: application/json" -H "Authorization: Bearer ${bearer_token}" -b "${ap_balance_id}")
+    response=$("${curl_path}" -s -w "\n%{http_code}" -X 'GET' "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=0&page-size=100&sort=id%3Aasc&filter=name%3D%3D%22${group_name2}%22" -H "accept: application/json" -H "Authorization: Bearer ${bearer_token}" -b "${ap_balance_id}")
+                
+    # Split into body and HTTP code
+    http_code=$(echo "$response" | tail -n1)
+    group_check=$(echo "$response" | sed '$d')
+
     # Check if the previous check was successful
-    if [[ ${group_check} =~ ^(200|201|202|204)$ ]]
+    if [[ ${http_code} =~ ^(200|201|202|204)$ ]]
     then
-        group_check=$("${curl_path}" -X 'GET' "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=0&page-size=100&sort=id%3Aasc&filter=name%3D%3D%22${group_name2}%22" -H "accept: application/json" -H "Authorization: Bearer ${bearer_token}" -b "${ap_balance_id}")
-        # Check if we got any results from the check  
         count=$(printf '%s\n' "$group_check" | tr -d '\n' | sed -n 's/.*"totalCount"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p')
         # If not, present an error message  
     else
@@ -455,7 +423,7 @@ remediation_prompt() {
         --height "400" \
         --json
     )
-    if [[ $? == 2 ]]
+    if [ $? == 2 ]
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Remediation choice: yes" >> "${log_file}"
         remediation_check="Yes"
@@ -470,26 +438,25 @@ redeployment_prompt() {
     # Create a command file (needed to close the dialog later if needed)
     command_file="/Users/Shared/dialogIndeterminate.txt"
     : > "$command_file"
-
-    if ! "${dialog_path}" \
-        --title "JSS Framework Fixer" \
-        --message "We're working on it! This can take a while depending on how many computers are in the Smart Computer Group" \
-        --icon "${icon}" \
-        --alignment "left" \
-        --small \
-        --messagefont "${message_font}" \
-        --titlefont "${title_font}" \
-        --button1text "Cancel" \
-        --height "400" \
-        --progress \
-        --indeterminate \
-        --commandfile "${command_file}" &
-    then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
+    
+    ${dialog_path} \
+    --title "JSS Framework Fixer" \
+    --message "We're working on it! This can take a while depending on how many computers are in the Smart Computer Group" \
+    --icon "${icon}" \
+    --alignment "left" \
+    --small \
+    --messagefont "${message_font}" \
+    --titlefont "${title_font}" \
+    --button1text "Cancel" \
+    --progress --indeterminate \
+    --commandfile "${command_file}" & sleep 0.1
+    if [ $? != 0 ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> ${log_file}
         invalidate_token
         exit 0
     fi
 }
+
 
 create_group() {
     # JSON payload for the smart group
@@ -674,27 +641,27 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: There are ${member_count} members in th
 echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Checking if remediation is desired" >> "${log_file}"
 remediation_prompt
 
-if  [[ $remediation_check == "Yes" ]]
-then
+if  [[ $remediation_check == "Yes" ]]; then
+    
     # Show Progress bar while the Jamf Management Framework is being redeployed on the computers
     redeployment_prompt
-
+    
     # Loop through the members of the Smart Computer Group and redeploy the Jamf Management Framework
-    for computer in ${member_list}
-    do
-        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> "${log_file}"
+    for computer in ${member_list}; do
+        
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> ${log_file}
         check_response -X 'POST' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v1/jamf-management-framework/redeploy/${computer}" -H 'accept: application/json' -d '' -b "${ap_balance_id}"
         # Update the dialog
         echo "progresstext: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> "${command_file}"
         check_token_expiration
         sleep 1
     done
-
+    
     # Close the progress dialog. Since indeterminate progress dialogs don't close automatically we are killing the dialog process
     pkill Dialog
-
+    
     # Clean up
-    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Cleaning up ..." >> "${log_file}"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Cleaning up ..." >> ${log_file}
     rm /Users/Shared/dialogIndeterminate.txt
 fi
     invalidate_token
