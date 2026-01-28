@@ -440,7 +440,7 @@ redeployment_prompt() {
     : > "$command_file"
     
     ${dialog_path} \
-    --title "JSS Framework Fixer" \
+    --title "Framework Fixer" \
     --message "We're working on it! This can take a while depending on how many computers are in the Smart Computer Group" \
     --icon "${icon}" \
     --alignment "left" \
