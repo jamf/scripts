@@ -229,13 +229,14 @@ group_option_prompt() {
 group_name_prompt() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Existing group workflow selected." >> "${log_file}"
     
-    # Initial check (same as original)
+    # Initial check
     http_code=$(check_response -X GET -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups")
     
     if ! echo "${http_code}" | grep -Eq '^(200|201|202|204)$'; then
         error_prompt
     fi
     
+    # Collect all group data
     page=0
     page_size=100
     tmp_groups="$(mktemp)"
@@ -244,10 +245,8 @@ group_name_prompt() {
     while : ; do
         echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Fetching page ${page} of Smart Computer Groups" >> "${log_file}"
         
-        # Original-style data fetch
         page_response=$("${curl_path}" -s -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v2/computer-groups/smart-groups?page=${page}&page-size=${page_size}&sort=name:asc")
         
-        # Minimal change: jq instead of grep/sed
         echo "${page_response}" \
         | jq '[.results[].name]' > /tmp/page_groups.json
         
@@ -268,7 +267,7 @@ group_name_prompt() {
         error_prompt
     fi
     
-    # SwiftDialog JSON (only change vs original selectvalues)
+    # SwiftDialog JSON
     dialog_json="$(mktemp)"
     
     jq -n \
@@ -398,12 +397,6 @@ no_members_prompt() {
         --titlefont "${title_font}" \
         --button1text "OK" \
         --height "400"
-    if [[ $? != 0 ]]
-    then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
-        invalidate_token
-        exit 0
-    fi
     invalidate_token
 }
 
@@ -450,13 +443,9 @@ redeployment_prompt() {
     --button1text "Cancel" \
     --progress --indeterminate \
     --commandfile "${command_file}" & sleep 0.1
-    if [ $? != 0 ]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> ${log_file}
-        invalidate_token
-        exit 0
-    fi
+    
+    dialog_pid=$!
 }
-
 
 create_group() {
     # JSON payload for the smart group
@@ -524,6 +513,16 @@ done_prompt() {
         --height "400"
 }
 
+dialog_still_running() {
+    kill -0 "$dialog_pid" 2>/dev/null
+}
+
+cleanup_and_exit() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Cleaning up ..." >> ${log_file}
+    rm -f /Users/Shared/dialogIndeterminate.txt
+    invalidate_token
+    exit 0
+}
 #######################################################################################################
 # Bearer token functions
 #######################################################################################################
@@ -646,24 +645,30 @@ if  [[ $remediation_check == "Yes" ]]; then
     # Show Progress bar while the Jamf Management Framework is being redeployed on the computers
     redeployment_prompt
     
-    # Loop through the members of the Smart Computer Group and redeploy the Jamf Management Framework
     for computer in ${member_list}; do
         
-        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> ${log_file}
+        if ! dialog_still_running; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled. Aborting remediation." >> "$log_file"
+            cleanup_and_exit
+        fi
+        
+        echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> "$log_file"
+        
         check_response -X 'POST' -H "Authorization: Bearer ${bearer_token}" "${jamf_pro_url}/api/v1/jamf-management-framework/redeploy/${computer}" -H 'accept: application/json' -d '' -b "${ap_balance_id}"
-        # Update the dialog
-        echo "progresstext: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> "${command_file}"
+        
+        echo "progresstext: Redeploying Jamf Management Framework on Computer with ID: ${computer}" >> "$command_file"
+        
         check_token_expiration
         sleep 1
     done
-    
+
+fi
     # Close the progress dialog. Since indeterminate progress dialogs don't close automatically we are killing the dialog process
     pkill Dialog
     
     # Clean up
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Cleaning up ..." >> ${log_file}
     rm /Users/Shared/dialogIndeterminate.txt
-fi
     invalidate_token
     echo "$(date '+%Y-%m-%d %H:%M:%S') INFO: Done!" >> "${log_file}"
     done_prompt
