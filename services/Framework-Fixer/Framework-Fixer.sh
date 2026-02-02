@@ -118,7 +118,7 @@ Please select a method to authenticate to Jamf Pro. Click on "Required Privilege
             --infobuttontext "Required Privileges" \
             --infobuttonaction "https://github.com/jamf/scripts/services/Framework-Fixer/?tab=readme-ov-file#requirements" \
             --small \
-            --height "400"
+            --height "450"
     )
     then
         echo "$(date '+%Y-%m-%d %H:%M:%S') WARNING: User Cancelled" >> "${log_file}"
