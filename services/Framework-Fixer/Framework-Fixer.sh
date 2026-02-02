@@ -116,7 +116,7 @@ Please select a method to authenticate to Jamf Pro. Click on "Required Privilege
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
             --infobuttontext "Required Privileges" \
-            --infobuttonaction "https://github.com/jamf/scripts/services/Framework-Fixer/?tab=readme-ov-file#requirements" \
+            --infobuttonaction "https://github.com/jamf/scripts/tree/main/services/Framework-Fixer#requirements" \
             --small \
             --height "450"
     )
