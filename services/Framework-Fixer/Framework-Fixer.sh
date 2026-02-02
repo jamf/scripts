@@ -156,7 +156,7 @@ credential_prompt() {
             --button2 \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
-            --height "400" \
+            --height "450" \
             --json
     )
     then
@@ -185,7 +185,7 @@ invalid_credentials_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "OK" \
-        --height "400"
+        --height "450"
 }
 
 # Prompt to choose new or existing group
@@ -204,7 +204,7 @@ group_option_prompt() {
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
             --small \
-            --height "400"
+            --height "450"
     )
     then
         group_selection=$(echo "${group_options}" | grep "\"Please select an option\" : " | awk -F '"' '{print $4}')
@@ -318,7 +318,7 @@ days_prompt() {
             --button2text "Back" \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
-            --height "400" \
+            --height "450" \
             --json
     )
     then
@@ -344,7 +344,7 @@ new_group_prompt() {
             --button2 \
             --messagefont "${message_font}" \
             --titlefont "${title_font}" \
-            --height "400" \
+            --height "450" \
             --json
     )
     then
@@ -396,7 +396,7 @@ no_members_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "OK" \
-        --height "400"
+        --height "450"
     invalidate_token
 }
 
@@ -413,7 +413,7 @@ remediation_prompt() {
         --button2text "Yes" \
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
-        --height "400" \
+        --height "450" \
         --json
     )
     if [ $? == 2 ]
@@ -492,7 +492,7 @@ error_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "OK" \
-        --height "400"
+        --height "450"
     then
         invalidate_token
         exit 1
@@ -510,7 +510,7 @@ done_prompt() {
         --messagefont "${message_font}" \
         --titlefont "${title_font}" \
         --button1text "OK" \
-        --height "400"
+        --height "450"
 }
 
 dialog_still_running() {
