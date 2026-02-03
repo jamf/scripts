@@ -16,7 +16,7 @@ jobs:
           failed=0
           # Find files: .sh, .go, .swift, .py
           # Exclude hidden directories/files (like inside .git)
-          files=$(find . -type f \( -name "*.sh" -o -name "*.go" -o -name "*.swift" -o -name "*.py" \) -not -path '*/.*')
+          files=$(find . -type f \( -name "*.sh" -o -name "*.go" -o -name "*.swift" -o -name "*.py" -o -name "README.md" \) -not -path '*/.*')
           
           for file in $files; do
             missing_reqs=0
