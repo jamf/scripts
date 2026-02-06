@@ -42,3 +42,7 @@ Check-in: Read
 
 Jamf Pro Server Actions:
 Send Computer Remote Command to Install Package
+
+Copyright 2026, Jamf Software LLC.
+This work is licensed under the terms of the Jamf Source Available License
+https://github.com/jamf/scripts/blob/main/LICENCE.md
