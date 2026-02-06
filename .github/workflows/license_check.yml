@@ -29,6 +29,7 @@ jobs:
             # We grep for Copyright, then pipe to grep for Jamf to ensure they are on the same line.
             if ! grep "Copyright" "$file" | grep -q "Jamf"; then
               echo "::error file=$file::Missing 'Copyright' and 'Jamf' on the same line."
+              echo "File: ${file}"
               missing_reqs=1
             fi
             
@@ -39,12 +40,14 @@ jobs:
               # Requirement 2: Specific license string
               if ! grep -Fq "This work is licensed under the terms of the Jamf Source Available License" "$file"; then
                 echo "::error file=$file::Missing 'This work is licensed under the terms of the Jamf Source Available License'"
+                echo "File: ${file}"
                 missing_reqs=1
               fi
               
               # Requirement 3: License URL
               if ! grep -Fq "https://github.com/jamf/scripts/blob/main/LICENCE.md" "$file"; then
                 echo "::error file=$file::Missing 'https://github.com/jamf/scripts/blob/main/LICENCE.md'"
+                echo "File: ${file}"
                 missing_reqs=1
               fi
             fi
