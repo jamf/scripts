@@ -10,16 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Check for License Headers
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           failed=0
-          # Find files: .sh, .go, .swift, .py
-          # Exclude hidden directories/files (like inside .git)
-          files=$(find . -type f \( -name "*.sh" -o -name "*.go" -o -name "*.swift" -o -name "*.py" -o -name "README.md" \) -not -path '*/.*')
+          error_report_file=$(mktemp)
+
+          if [ "$EVENT_NAME" == "pull_request" ]; then
+            git fetch origin "$BASE_REF"
+            files=$(git diff --name-only "origin/$BASE_REF" HEAD | grep -E '\.(sh|go|swift|py)|README\.md$' || true)
+          else
+            # Find files: .sh, .go, .swift, .py
+            # Exclude hidden directories/files (like inside .git)
+            files=$(find . -type f \( -name "*.sh" -o -name "*.go" -o -name "*.swift" -o -name "*.py" -o -name "README.md" \) -not -path '*/.*')
+          fi
           
           for file in $files; do
-            if [ "$file" = "./README.md" ]; then
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            if [ "$file" = "./README.md" ] || [ "$file" = "README.md" ]; then
               continue
             fi
             
@@ -28,8 +43,9 @@ jobs:
             # Requirement 1: A line with both "Copyright" and "Jamf"
             # We grep for Copyright, then pipe to grep for Jamf to ensure they are on the same line.
             if ! grep "Copyright" "$file" | grep -q "Jamf"; then
-              echo "::error file=$file::Missing 'Copyright' and 'Jamf' on the same line."
-              echo "File: ${file}"
+              msg="Missing 'Copyright' and 'Jamf' on the same line."
+              echo "::error file=$file::$msg"
+              echo "- $file: $msg" >> "$error_report_file"
               missing_reqs=1
             fi
             
@@ -39,15 +55,17 @@ jobs:
             else
               # Requirement 2: Specific license string
               if ! grep -Fq "This work is licensed under the terms of the Jamf Source Available License" "$file"; then
-                echo "::error file=$file::Missing 'This work is licensed under the terms of the Jamf Source Available License'"
-                echo "File: ${file}"
+                msg="Missing 'This work is licensed under the terms of the Jamf Source Available License'"
+                echo "::error file=$file::$msg"
+                echo "- $file: $msg" >> "$error_report_file"
                 missing_reqs=1
               fi
               
               # Requirement 3: License URL
               if ! grep -Fq "https://github.com/jamf/scripts/blob/main/LICENCE.md" "$file"; then
-                echo "::error file=$file::Missing 'https://github.com/jamf/scripts/blob/main/LICENCE.md'"
-                echo "File: ${file}"
+                msg="Missing 'https://github.com/jamf/scripts/blob/main/LICENCE.md'"
+                echo "::error file=$file::$msg"
+                echo "- $file: $msg" >> "$error_report_file"
                 missing_reqs=1
               fi
             fi
@@ -58,7 +76,12 @@ jobs:
           done
           
           if [ $failed -eq 1 ]; then
-            echo "One or more files are missing required license headers."
+            echo "---------------------------------------------------"
+            echo "License Check Summary: Failed Files"
+            echo "---------------------------------------------------"
+            cat "$error_report_file"
+            echo "---------------------------------------------------"
+            rm "$error_report_file"
             exit 1
           else
             echo "All scanned files contain the required license headers."
