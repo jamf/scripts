@@ -76,7 +76,7 @@ while [[ $# -gt 0 ]]; do
 		--keep-workspace) KEEP_WORKSPACE=true; shift ;;
 		--docker-only)   DOCKER_ONLY=true;    shift ;;
 		--help)
-			sed -n '/^# Usage:/,/^#####/{ /^####/d; s/^# \?//; p }' "$0"
+			sed -n '/^# Usage:/,/^#####/{ /^####/d; s/^# \?//; p; }' "$0"
 			exit 0
 			;;
 		*)
