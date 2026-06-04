@@ -67,6 +67,7 @@
 #       generic path/method/header/body arguments
 # 1.3 - Renamed print() to tprint() to avoid shadowing zsh builtin; locked log file
 #       to 600 permissions via umask 077; fixed silent-read newline routing to terminal
+# 1.4 - Hits each pod twice per run; hitAllPods() accepts pass number for log clarity
 #
 ##########################################################################################
 
@@ -77,7 +78,7 @@
 # Script metadata
 scriptExtension=${0##*.}
 swTitle=$(/usr/bin/basename "$0" ."${scriptExtension}")
-ver="1.3"
+ver="1.4"
 
 # Log directory and file
 debugDir="/tmp"
@@ -399,13 +400,16 @@ hitAllPods()
 {
 
     # Phase 2: issue an authenticated request against each discovered pod individually.
+    # Accepts an optional pass number argument for logging clarity when called multiple times.
     # Token is obtained once before this function is called; checkTokenExpiration is called
     # per-pod only as a safety net for large fleets where the token may expire mid-run.
     # Returns: 0 if all pods respond, 1 if any curl call fails outright.
 
+    local pass_num="${1:-1}"
+
     tprint ""
-    tprint "Step 3: Hitting ${#cookies} pod(s) — ${HTTP_METHOD} https://${FQDN}${URL_PATH}"
-    log "Step 3: Sending ${HTTP_METHOD} requests to ${#cookies} pod(s)"
+    tprint "Step 3 (Pass ${pass_num}): Hitting ${#cookies} pod(s) — ${HTTP_METHOD} https://${FQDN}${URL_PATH}"
+    log "Step 3 (Pass ${pass_num}): Sending ${HTTP_METHOD} requests to ${#cookies} pod(s)"
 
     integer pod_num=0
     integer error_count=0
@@ -419,19 +423,19 @@ hitAllPods()
     for cookie in "${cookies[@]}"; do
         pod_num=$(( pod_num + 1 ))
 
-        log "Pod ${pod_num} (cookie: ${cookie})"
+        log "Pass ${pass_num} / Pod ${pod_num} (cookie: ${cookie})"
 
         # Safety net: only refresh if genuinely expiring (covers large fleets with short-lived tokens)
         if ! checkTokenExpiration; then
-            log "ERROR: Could not refresh token before pod ${pod_num}"
-            tprint "  ✗ Pod ${pod_num}: token refresh failed"
+            log "ERROR: Could not refresh token before pass ${pass_num} / pod ${pod_num}"
+            tprint "  ✗ Pass ${pass_num} / Pod ${pod_num}: token refresh failed"
             error_count=$(( error_count + 1 ))
             continue
         fi
 
         tprint ""
         tprint "──────────────────────────────────────────"
-        tprint "  Pod ${pod_num}  (cookie: ${cookie})"
+        tprint "  Pass ${pass_num} / Pod ${pod_num}  (cookie: ${cookie})"
         tprint "  ${HTTP_METHOD} https://${FQDN}${URL_PATH}"
         tprint ""
 
@@ -449,8 +453,8 @@ hitAllPods()
         curlArgs+=("https://${FQDN}${URL_PATH}")
 
         result=$(/usr/bin/curl "${curlArgs[@]}" 2>&1) || {
-            log "ERROR: curl failed for pod ${pod_num}"
-            tprint "  ✗ Pod ${pod_num}: curl error"
+            log "ERROR: curl failed for pass ${pass_num} / pod ${pod_num}"
+            tprint "  ✗ Pass ${pass_num} / Pod ${pod_num}: curl error"
             error_count=$(( error_count + 1 ))
             continue
         }
@@ -460,8 +464,8 @@ hitAllPods()
         timeTotal=$(echo "$result" | /usr/bin/tail -1 | /usr/bin/awk '{print $2}')
         body=$(echo "$result" | /usr/bin/sed '$d')
 
-        log "Pod ${pod_num} — HTTP ${httpCode} (${timeTotal})"
-        [[ -n "$body" ]] && log "Pod ${pod_num} — Response body: ${body}"
+        log "Pass ${pass_num} / Pod ${pod_num} — HTTP ${httpCode} (${timeTotal})"
+        [[ -n "$body" ]] && log "Pass ${pass_num} / Pod ${pod_num} — Response body: ${body}"
 
         tprint "  HTTP ${httpCode}  (time: ${timeTotal})"
         [[ -n "$body" ]] && tprint "  ${body}"
@@ -505,11 +509,14 @@ mainWorkflow()
         return 1
     fi
 
-    # Step 3: Hit all pods (token checked per-pod as safety net only, not re-fetched unless expiring)
-    if ! hitAllPods; then
-        invalidateToken
-        return 1
-    fi
+    # Step 3: Hit all pods twice — token checked per-pod as safety net only
+    integer pass
+    for pass in 1 2; do
+        if ! hitAllPods $pass; then
+            invalidateToken
+            return 1
+        fi
+    done
 
     # Step 4: Clean up
     tprint "Step 4: Cleaning up"
