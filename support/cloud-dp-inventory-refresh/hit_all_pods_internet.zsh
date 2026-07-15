@@ -68,6 +68,9 @@
 # 1.3 - Renamed print() to tprint() to avoid shadowing zsh builtin; locked log file
 #       to 600 permissions via umask 077; fixed silent-read newline routing to terminal
 # 1.4 - Hits each pod twice per run; hitAllPods() accepts pass number for log clarity
+# 1.5 - Replaced consecutive-miss pod discovery (POD_DISCOVERY_TRIES=10) with fixed
+#       total probe count (POD_DISCOVERY_PROBES=50) to eliminate early-exit risk on
+#       larger fleets
 #
 ##########################################################################################
 
@@ -78,7 +81,7 @@
 # Script metadata
 scriptExtension=${0##*.}
 swTitle=$(/usr/bin/basename "$0" ."${scriptExtension}")
-ver="1.4"
+ver="1.5"
 
 # Log directory and file
 debugDir="/tmp"
@@ -97,9 +100,12 @@ URL_PATH="/api/v1/cloud-distribution-point/refresh-inventory"
 HTTP_METHOD="POST"
 typeset -a cookies
 
-# How many consecutive cookieless probes with no new cookie before we stop.
-# 10 is sufficient for Standard (2 pods) and Premium (4 pods); raise for larger fleets.
-POD_DISCOVERY_TRIES=10
+# Total number of cookieless probes to send during pod discovery. Using a fixed probe
+# count rather than a consecutive-miss threshold eliminates the statistical risk of
+# stopping before all pods are seen. With random nginx routing, the probability of
+# missing a pod across N probes is (1 - 1/P)^N where P is the pod count:
+#   50 probes, 2 pods → <0.000001%   50 probes, 4 pods → 0.001%   50 probes, 8 pods → 0.1%
+POD_DISCOVERY_PROBES=50
 
 ##########################################################################################
 #################################### Start functions #####################################
@@ -349,37 +355,33 @@ discoverPods()
 
     # Phase 1: discover all distinct jpro-ingress cookie values via cookieless probes
     # against /healthCheck.html (fast/cheap regardless of URL_PATH).
+    # Sends exactly POD_DISCOVERY_PROBES requests and collects all unique cookie values
+    # seen — no early exit. This avoids the statistical risk of a consecutive-miss
+    # threshold stopping before all pods have been observed.
     # Sets the global `cookies` array.
     # Returns: 0 if at least one pod found, 1 otherwise.
 
     tprint ""
-    tprint "Step 1: Discovering pods for ${FQDN}"
-    log "Step 1: Pod discovery via jpro-ingress cookie probing"
+    tprint "Step 1: Discovering pods for ${FQDN} (${POD_DISCOVERY_PROBES} probes)"
+    log "Step 1: Pod discovery — sending ${POD_DISCOVERY_PROBES} probes to https://${FQDN}/healthCheck.html"
 
-    integer consecutive_no_new=0
-    integer total_probes=0
+    integer probe_num=0
     local cookie
 
-    while (( consecutive_no_new < POD_DISCOVERY_TRIES )); do
+    while (( probe_num < POD_DISCOVERY_PROBES )); do
+        probe_num=$(( probe_num + 1 ))
+
         cookie=$(/usr/bin/curl -sI "https://${FQDN}/healthCheck.html" --max-time 10 2>/dev/null \
             | /usr/bin/grep -i "^set-cookie: jpro-ingress=" \
             | /usr/bin/sed 's/.*jpro-ingress=\([^;]*\).*/\1/' \
             | /usr/bin/tr -d '[:space:]')
 
-        total_probes=$(( total_probes + 1 ))
-
-        if [[ -z "$cookie" ]]; then
-            consecutive_no_new=$(( consecutive_no_new + 1 ))
-            continue
-        fi
+        [[ -z "$cookie" ]] && continue
 
         if (( ! ${cookies[(Ie)$cookie]} )); then
             cookies+=("$cookie")
-            consecutive_no_new=0
-            log "Found pod cookie: ${cookie} (${#cookies} total after ${total_probes} probes)"
-            tprint "  ✓ Found pod cookie: ${cookie} (${#cookies} total after ${total_probes} probes)"
-        else
-            consecutive_no_new=$(( consecutive_no_new + 1 ))
+            log "Found pod cookie: ${cookie} (${#cookies} total after ${probe_num} probes)"
+            tprint "  ✓ Found pod cookie: ${cookie} (${#cookies} total after ${probe_num} probes)"
         fi
     done
 
@@ -389,8 +391,8 @@ discoverPods()
         return 1
     fi
 
-    log "Pod discovery complete: ${#cookies} pod(s) found"
-    tprint "  → ${#cookies} pod(s) discovered"
+    log "Pod discovery complete: ${#cookies} pod(s) found after ${POD_DISCOVERY_PROBES} probes"
+    tprint "  → ${#cookies} pod(s) discovered after ${POD_DISCOVERY_PROBES} probes"
     return 0
 
 }
