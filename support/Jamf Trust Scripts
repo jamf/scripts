@@ -1,0 +1,101 @@
+<#
+.SYNOPSIS
+    Creates an init.json file in the JamfTrust Global folder and restarts the service to trigger silent activation.
+
+.DESCRIPTION
+    Writes an init.json file into C:\ProgramData\JamfTrust\Global (the location the
+    service reads via IConfigurationProvider.GetJamfTrustGlobalDirectory()). On startup
+    the ActivationActor pops these registration parameters and performs silent activation,
+    then deletes the file. Once the file is created, the JamfTrust service is restarted.
+
+    Must be executed with administrator rights since the JamfTrust folder is protected.
+
+    This variant takes no parameters; the activation values are hardcoded below so the
+    script can be deployed as-is (e.g. an Intune platform script or a Win32 PowerShell
+    script installer type, neither of which accepts command-line arguments).
+
+.NOTES
+    Error codes are based on
+    https://learn.microsoft.com/en-gb/windows/win32/debug/system-error-codes--0-499-
+        Error code 0   - ERROR_SUCCESS
+        Error code 352 - ERROR_FAIL_RESTART
+#>
+
+<# Hardcoded activation parameters #>
+$SecretKey             = "" #Taken from secure cloud (radar) deployment screen under specific activation link
+$ApiKey                = "" #Taken from secure cloud (radar) deployment screen under specific activation link
+$ActivationProfileLink = "" #Taken from secure cloud (radar) example https://e.wandera.com/test
+$NoPii                 = $false #leave as is
+
+$global_folder = "C:\ProgramData\JamfTrust\Global"
+$service_name  = "JamfTrust"
+
+<# init.json content #>
+function New-InitJson {
+    param(
+        [string]$GlobalFolder,
+        [string]$SecretKey,
+        [string]$ApiKey,
+        [string]$ActivationProfileLink,
+        [bool]$NoPii
+    )
+
+    # Fields and casing mirror the installer's RegistrationParameters DTO
+    # (JamfTrust.Client.Windows.Installer/Models/RegistrationParameter.cs),
+    # which is serialized with default Newtonsoft (PascalCase) into init.json.
+    $init_json = [ordered]@{
+        SecretKey             = $SecretKey
+        ApiKey                = $ApiKey
+        ActivationProfileLink = $ActivationProfileLink
+        NoPii                 = $NoPii
+    }
+
+    $init_json_file = [pscustomobject]$init_json
+
+    if (-not (Test-Path $GlobalFolder)) {
+        New-Item -ItemType Directory -Path $GlobalFolder | Out-Null
+    }
+
+    $init_json_path = Join-Path $GlobalFolder "init.json"
+
+    Write-Host "Creating init.json at $init_json_path"
+    $init_json_file | ConvertTo-Json -Depth 100 | Out-File -FilePath $init_json_path -Encoding utf8
+}
+
+<# Restart the JamfTrust service #>
+function Restart-JamfTrust {
+    Write-Host "Restarting JamfTrust UI and Service"
+
+    net stop JamfTrust
+    taskkill /F /IM JamfTrust.Client.Windows.UI.exe
+
+    net start JamfTrust
+
+    $limit = (Get-Date).AddMinutes(1)
+
+    while ((Get-Date) -le $limit) {
+        $service_status = Get-Service -Name $service_name
+        if ($service_status.Status -eq 'Running') {
+            Write-Host "Service is running"
+            return
+        }
+
+        Start-Sleep -Seconds 1
+    }
+
+    Write-Error -Message "Script failed to restart the service" -Category InvalidOperation -ErrorId 352
+    exit(352)
+}
+
+<#----------------------------------------#>
+
+New-InitJson -GlobalFolder $global_folder `
+             -SecretKey $SecretKey `
+             -ApiKey $ApiKey `
+             -ActivationProfileLink $ActivationProfileLink `
+             -NoPii $NoPii
+
+Restart-JamfTrust
+
+Write-Host "Done. init.json created in Global folder and service restarted."
+exit(0)
