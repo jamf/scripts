@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: preheat
+spec:
+  type: tooling
+  lifecycle: experimental
+  owner: concepts
+  system: jamf-concept-projects

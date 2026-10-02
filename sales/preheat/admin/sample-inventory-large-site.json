@@ -1,0 +1,569 @@
+{
+ "recorded": "2026-09-28 21:15",
+ "devices": [
+  {
+   "id": 2,
+   "name": "officeX-cache",
+   "model": "Macmini9,1",
+   "version": "27.0.1",
+   "build": "26A434",
+   "board": "J274AP",
+   "site": "HQ",
+   "building": "Office X",
+   "cache_guid": "AAAA1111-2222-3333-4444-0FF1CE000001",
+   "cache_status": "Active; guid AAAA1111-2222-3333-4444-0FF1CE000001; ip 10.10.0.106; public 203.0.113.10; free 481.7 GB; used 20.6 GB; status OK",
+   "caches_found": "AAAA1111-2222-3333-4444-0FF1CE000001 localhost:49419 healthy reachable",
+   "assets_ea": "No macOS assets cached",
+   "ready_ea_id": 42,
+   "ip": "10.10.0.106"
+  },
+  {
+   "id": 1,
+   "name": "laptop",
+   "model": "Mac16,8",
+   "version": "27.0.1",
+   "build": "26A434",
+   "board": "J614sAP",
+   "site": "HQ",
+   "building": "Office X",
+   "cache_guid": "",
+   "cache_status": "Not a content cache",
+   "caches_found": "AAAA1111-2222-3333-4444-0FF1CE000001 10.10.0.106:49419 healthy reachable\ndns: public 203.0.113.10-203.0.113.19",
+   "assets_ea": "",
+   "ready_ea_id": null
+  },
+  {
+   "id": 3,
+   "name": "x-air-1",
+   "model": "Mac14,2",
+   "version": "26.0",
+   "build": "25A353",
+   "board": "J413AP",
+   "site": "HQ",
+   "building": "Office X",
+   "cache_guid": "",
+   "cache_status": "Not a content cache",
+   "caches_found": "AAAA1111-2222-3333-4444-0FF1CE000001 10.10.0.106:49419 healthy reachable",
+   "assets_ea": "",
+   "ready_ea_id": null
+  },
+  {
+   "id": 101,
+   "name": "x-ipad-1",
+   "model": "iPad13,16",
+   "version": "26.0",
+   "build": "23A341",
+   "site": "HQ",
+   "building": "Office X",
+   "ip": "203.0.113.10",
+   "cache_guid": "",
+   "cache_status": "",
+   "caches_found": "",
+   "assets_ea": "",
+   "ready_ea_id": null
+  },
+  {
+   "id": 102,
+   "name": "x-appletv-1",
+   "model": "AppleTV14,1",
+   "version": "26.0",
+   "build": "23J345",
+   "site": "HQ",
+   "building": "Office X",
+   "ip": "203.0.113.10",
+   "cache_guid": "",
+   "cache_status": "",
+   "caches_found": "",
+   "assets_ea": "",
+   "ready_ea_id": null
+  },
+  {
+   "id": 20,
+   "name": "officeX-cache-2",
+   "model": "Macmini9,1",
+   "version": "27.0.1",
+   "build": "26A434",
+   "board": "J274AP",
+   "site": "HQ",
+   "building": "Office X",
+   "cache_guid": "BBBB1111-2222-3333-4444-0FF1CE000002",
+   "cache_status": "Active; guid BBBB1111-2222-3333-4444-0FF1CE000002; ip 10.10.0.107; public 203.0.113.10; free 481.7 GB; used 20.6 GB; status OK",
+   "caches_found": "BBBB1111-2222-3333-4444-0FF1CE000002 localhost:49419 healthy reachable",
+   "assets_ea": "COMPLETE 18.4GB 2026-09-18 /content/downloads/52/44/142-16670-A_C1NGFF0VNT/e1mno92ap4g9s6epq5bbee9a57b5tm983g/InstallAssistant.pkg\nCOMPLETE 18.4GB 2026-09-28 /2026FallFCS/8eeb9130-a13c-4b78-996e-23ecf3c58476/com_apple_MobileAsset_MacSoftwareUpdate/da5d4070865b20aa138e6fef954889710e559a06.zip",
+   "ready_ea_id": 42,
+   "ip": "10.10.0.107",
+   "peers": [
+    "AAAA1111-2222-3333-4444-0FF1CE000001"
+   ]
+  },
+  {
+   "id": 110,
+   "name": "x-ipad-other-exit",
+   "model": "iPad13,16",
+   "version": "26.0",
+   "build": "23A341",
+   "site": "HQ",
+   "building": "",
+   "ip": "203.0.113.17",
+   "cache_guid": "",
+   "cache_status": "",
+   "caches_found": "",
+   "assets_ea": "",
+   "ready_ea_id": null
+  },
+  {
+   "id": 111,
+   "name": "stranger-ipad",
+   "model": "iPad13,16",
+   "version": "26.0",
+   "build": "23A341",
+   "site": "",
+   "building": "",
+   "ip": "198.18.7.7",
+   "cache_guid": "",
+   "cache_status": "",
+   "caches_found": "",
+   "assets_ea": "",
+   "ready_ea_id": null
+  }
+ ],
+ "apple_answers": {
+  "ipados|J407AP|iPad13,16|26.0|23A341": [
+   {
+    "version": "27.0.1",
+    "build": "24A446",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/c6d1a429-45e8-4652-a07f-31ea7e4f4edb/com_apple_MobileAsset_SoftwareUpdate/1cb69da96a4545098cbde383410345092e0d9bd9.zip",
+    "prereq": "",
+    "size": 8345528509
+   },
+   {
+    "version": "27.0.1",
+    "build": "24A446",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/6399312e-3770-4c06-ae01-c3836b6cb7da/com_apple_MobileAsset_SoftwareUpdate/060db0349a690dcd54ce31273ebcbda6462d221a.zip",
+    "prereq": "23A341",
+    "size": 5699492509
+   },
+   {
+    "version": "26.7.1",
+    "build": "23H30",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/70b5af77-06c5-444e-9d5a-a8e456b6ac89/com_apple_MobileAsset_SoftwareUpdate/d55646ffb43553e423f64e6806342d1dd440ebff.zip",
+    "prereq": "",
+    "size": 7964352371
+   },
+   {
+    "version": "26.7.1",
+    "build": "23H30",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/e0d62fe5-d1e1-462a-9b8c-374f165dafa7/com_apple_MobileAsset_SoftwareUpdate/060f7f8ddb9a6e17a00f177abb5015a157c3e619.zip",
+    "prereq": "23A341",
+    "size": 4258597123
+   }
+  ],
+  "mac|J274AP|Macmini9,1|27.0.1|26A434": [
+   {
+    "version": "13.7.8",
+    "build": "22H730",
+    "url": "https://updates.cdn-apple.com/2025SummerFCS/patches/093-21919/26CB8378-0A7E-4002-A29A-783807562955/com_apple_MobileAsset_MacSoftwareUpdate/97a386b5182904411d3cf455febfcf86757eb2cd.zip",
+    "prereq": "",
+    "size": 12185064350
+   },
+   {
+    "version": "27.0.1",
+    "build": "26A5434",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8eeb9130-a13c-4b78-996e-23ecf3c58476/com_apple_MobileAsset_MacSoftwareUpdate/da5d4070865b20aa138e6fef954889710e559a06.zip",
+    "prereq": "",
+    "size": 18359340881
+   },
+   {
+    "version": "26.7.1",
+    "build": "25G241",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8ec11cd7-dce3-46fa-9b24-28f72dd1f7ec/com_apple_MobileAsset_MacSoftwareUpdate/af34f3ce7e69c63e0635ee357f5405cefd45834a.zip",
+    "prereq": "",
+    "size": 18352010723
+   },
+   {
+    "version": "14.8.9",
+    "build": "23J631",
+    "url": "https://updates.cdn-apple.com/2026SpringFCS/patches/140-88610/0C176173-8545-411A-A339-D34839E9433B/com_apple_MobileAsset_MacSoftwareUpdate/7742064d78e178b2ed119862104e6620dad4caa5.zip",
+    "prereq": "",
+    "size": 13634151792
+   },
+   {
+    "version": "12.7.6",
+    "build": "21H1320",
+    "url": "https://updates.cdn-apple.com/2024SpringFCS/patches/062-40399/DE1EC861-93E8-4EC5-8C9D-66ABF9E03140/com_apple_MobileAsset_MacSoftwareUpdate/74d53fc10d4f444b01cb19944407a34a8edccebf.zip",
+    "prereq": "",
+    "size": 11495541757
+   },
+   {
+    "version": "15.8.1",
+    "build": "24H32",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/ad22d07e-0d68-4679-9375-99a5c4fc95ae/com_apple_MobileAsset_MacSoftwareUpdate/a30f5f5e5659a0760382124bee535d7ac33cb51f.zip",
+    "prereq": "",
+    "size": 15640056810
+   },
+   {
+    "version": "11.7.11",
+    "build": "20G1443",
+    "url": "https://updates.cdn-apple.com/2023SpringFCS/patches/047-32255/8C537538-2276-4D30-AEA3-8934521EA560/com_apple_MobileAsset_MacSoftwareUpdate/e7e703b5528a1d73fbcdb37c487160f9e4af5948.zip",
+    "prereq": "",
+    "size": 11492857293
+   }
+  ],
+  "mac|J413AP|Mac14,2|26.0|25A353": [
+   {
+    "version": "13.7.8",
+    "build": "22H730",
+    "url": "https://updates.cdn-apple.com/2025SummerFCS/patches/093-21919/26CB8378-0A7E-4002-A29A-783807562955/com_apple_MobileAsset_MacSoftwareUpdate/97a386b5182904411d3cf455febfcf86757eb2cd.zip",
+    "prereq": "",
+    "size": 12185064350
+   },
+   {
+    "version": "14.8.9",
+    "build": "23J631",
+    "url": "https://updates.cdn-apple.com/2026SpringFCS/patches/140-88610/0C176173-8545-411A-A339-D34839E9433B/com_apple_MobileAsset_MacSoftwareUpdate/7742064d78e178b2ed119862104e6620dad4caa5.zip",
+    "prereq": "",
+    "size": 13634151792
+   },
+   {
+    "version": "26.7.1",
+    "build": "25G241",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8ec11cd7-dce3-46fa-9b24-28f72dd1f7ec/com_apple_MobileAsset_MacSoftwareUpdate/af34f3ce7e69c63e0635ee357f5405cefd45834a.zip",
+    "prereq": "",
+    "size": 18352010723
+   },
+   {
+    "version": "27.0.1",
+    "build": "26A5434",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8eeb9130-a13c-4b78-996e-23ecf3c58476/com_apple_MobileAsset_MacSoftwareUpdate/da5d4070865b20aa138e6fef954889710e559a06.zip",
+    "prereq": "",
+    "size": 18359340881
+   },
+   {
+    "version": "15.8.1",
+    "build": "24H32",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/ad22d07e-0d68-4679-9375-99a5c4fc95ae/com_apple_MobileAsset_MacSoftwareUpdate/a30f5f5e5659a0760382124bee535d7ac33cb51f.zip",
+    "prereq": "",
+    "size": 15640056810
+   },
+   {
+    "version": "12.7.6",
+    "build": "21H1320",
+    "url": "https://updates.cdn-apple.com/2024SpringFCS/patches/062-40399/DE1EC861-93E8-4EC5-8C9D-66ABF9E03140/com_apple_MobileAsset_MacSoftwareUpdate/74d53fc10d4f444b01cb19944407a34a8edccebf.zip",
+    "prereq": "",
+    "size": 11495541757
+   }
+  ],
+  "mac|J614sAP|Mac16,8|27.0.1|26A434": [
+   {
+    "version": "26.7.1",
+    "build": "25G241",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8ec11cd7-dce3-46fa-9b24-28f72dd1f7ec/com_apple_MobileAsset_MacSoftwareUpdate/af34f3ce7e69c63e0635ee357f5405cefd45834a.zip",
+    "prereq": "",
+    "size": 18352010723
+   },
+   {
+    "version": "15.8.1",
+    "build": "24H32",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/ad22d07e-0d68-4679-9375-99a5c4fc95ae/com_apple_MobileAsset_MacSoftwareUpdate/a30f5f5e5659a0760382124bee535d7ac33cb51f.zip",
+    "prereq": "",
+    "size": 15640056810
+   },
+   {
+    "version": "27.0.1",
+    "build": "26A5434",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/8eeb9130-a13c-4b78-996e-23ecf3c58476/com_apple_MobileAsset_MacSoftwareUpdate/da5d4070865b20aa138e6fef954889710e559a06.zip",
+    "prereq": "",
+    "size": 18359340881
+   }
+  ],
+  "tvos|J255AP|AppleTV14,1|26.0|23J345": [
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/0c859739-d90e-427e-a8ea-8c3733a0461b/com_apple_MobileAsset_SoftwareUpdate/35400de192388eac95c568781814f83e8249a82aeec264a926d95a89c1711344.aea",
+    "prereq": "23J362",
+    "size": 2147483648
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/f144ac26-a720-44a7-8114-8a0607a4f672/com_apple_MobileAsset_SoftwareUpdate/2104dbeeffe1e2f7ac38c883f0c82c8fc7deccc80823014c3f34923f9cc68b51.aea",
+    "prereq": "20L497",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/499a07e9-49a0-4693-ae59-dcb69016c802/com_apple_MobileAsset_SoftwareUpdate/a242763b8c7532ab1ece1e97deac2fe223ee5ff7cfa71ef1001ce6932496b670.aea",
+    "prereq": "21L569",
+    "size": 3019898880
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/82022510-ece2-4d42-ab31-497df2008016/com_apple_MobileAsset_SoftwareUpdate/fa811277ad21f7530c59020911ca4b05167070201552ac40f17ff573d400801b.aea",
+    "prereq": "20K672",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/6da069ed-49df-47b6-b45f-da16939d2273/com_apple_MobileAsset_SoftwareUpdate/e0490b4385345f8e1375a7c5e3971fabf0e34b06246fc3f968d6d5e81c0c13e7.aea",
+    "prereq": "20K661",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/1fb5b4a5-721a-4589-9508-9a9401457148/com_apple_MobileAsset_SoftwareUpdate/64dcf83ca9c4c38182b71fab9f01ea459ff0a5079fc42aedac96b3c022563373.aea",
+    "prereq": "21M71",
+    "size": 3019898880
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/d5957056-e572-40c7-91f4-fe918760f952/com_apple_MobileAsset_SoftwareUpdate/9d0763adf98269b83609c5c46538d00c1d780ca61fae069822896d56a171e167.aea",
+    "prereq": "20J8378",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/35b3b52f-d9e6-490e-8997-76105740800d/com_apple_MobileAsset_SoftwareUpdate/0b2494bdc182b91be9cba63dd3a4468e43ecbcf720cd9c2f609ddade4bd20c92.aea",
+    "prereq": "21K69",
+    "size": 3154116608
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/41b8913a-41a4-48c8-b3a1-6e6f8c30a80c/com_apple_MobileAsset_SoftwareUpdate/e8684c07ef78e2ec067586cefbd5193837426c9331269286290a2544b826e425.aea",
+    "prereq": "22L261",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/a59232d6-af15-432d-b36e-228f5c190ae0/com_apple_MobileAsset_SoftwareUpdate/d417441e26b80b4ab06529e948db0b9b1aae2a05f723127d5f41a40c7cfe88eb.aea",
+    "prereq": "23J582",
+    "size": 2147483648
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/aa3c63ef-b4e6-4b8a-ae84-0daf15cf1ba4/com_apple_MobileAsset_SoftwareUpdate/06f9703cf00f172bfbc0226b3ca6211c8c429643206564ea3f5436b0ba3cdb32.aea",
+    "prereq": "22K561",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/74d52f4f-b217-406b-b646-97c6eab068e5/com_apple_MobileAsset_SoftwareUpdate/8072b444430e65ad7d5a5394238d76fda294ea44a9af2eae503f6545421652a9.aea",
+    "prereq": "22K557",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/246b63f8-b70d-4fcf-8adf-65b274f71c42/com_apple_MobileAsset_SoftwareUpdate/a6820d2d0d442d18aeabd3a8d935d13de402a7eac4b9eb2aa02ad03505fc081a.aea",
+    "prereq": "23J353",
+    "size": 2147483648
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/6d98cda1-5422-466c-925e-0b2e2a83191f/com_apple_MobileAsset_SoftwareUpdate/3eb83a7e19512c33ce064656c0373edf70cc6e85a009ddacb2cb5470040bff9f.aea",
+    "prereq": "21K646",
+    "size": 3087007744
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/33135f98-36f9-4a54-b9b6-49a31ffa9a81/com_apple_MobileAsset_SoftwareUpdate/3459df78cac44630a9a34d3836a864a364317f2b98775cbed3606a8876392b08.aea",
+    "prereq": "23L773",
+    "size": 2046820352
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/708a7b9a-5a24-474d-908c-dcc192535abb/com_apple_MobileAsset_SoftwareUpdate/5fe152218b8bc239014b536946b03cc272b228c2e2d6393c4ae46b91322795c3.aea",
+    "prereq": "21K364",
+    "size": 3087007744
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/08f782b4-b150-4598-b2d4-3b9661bcc46b/com_apple_MobileAsset_SoftwareUpdate/284576c8c95b28f2332091892e9ceada2d14b0efb88eaa3a851f13135b41bf52.aea",
+    "prereq": "20L498",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/27b22cbc-495f-427b-a997-85fd6e096435/com_apple_MobileAsset_SoftwareUpdate/dce5c2222c4b12dbafe8aae9f984e55c617fb789215f0f6e76f3e1bcab7339d1.aea",
+    "prereq": "22L255",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/21a88284-433a-4986-9592-3c0b7eccddb9/com_apple_MobileAsset_SoftwareUpdate/f6647c3f4a33a0814d4de8d1f343dc148ce5b973114e1da571c4dfb91cbe65cb.aea",
+    "prereq": "22K160",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/7d9186c9-76df-44f9-b9de-a817ade6efdb/com_apple_MobileAsset_SoftwareUpdate/c60653d1d17664ab9057de6b9b181eff52922ab2488267e96a857cade86c3b7f.aea",
+    "prereq": "23L243",
+    "size": 2046820352
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/de096ad6-d2ef-4c0d-8e61-77568e3124e3/com_apple_MobileAsset_SoftwareUpdate/9975b082de4a6ce32a0b77c4b6f507e397a206ad4780fac932c41a531585da06.aea",
+    "prereq": "21J354",
+    "size": 3154116608
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/5f82f493-2f16-415c-baca-94639f59cdf5/com_apple_MobileAsset_SoftwareUpdate/557f57477a15d13609f30539847f55a88e474bb141fb737d10924482bb26e047.aea",
+    "prereq": "22M84",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/3f7570b0-b247-4f68-a7f6-6b26d348f6f3/com_apple_MobileAsset_SoftwareUpdate/80511384cf6a9a33ac47403ed6917b0f8fdf82b5b59e46abe7f430322e24f5d5.aea",
+    "prereq": "20M73",
+    "size": 3355443200
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/0f7e610e-c7da-4bbf-9459-032f72863a7f/com_apple_MobileAsset_SoftwareUpdate/c12def7918f42b5da79ffadab519aa43fba79b568907bf6a9fd3f0fdfe4f3e0e.aea",
+    "prereq": "21K365",
+    "size": 3087007744
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/0f35bc0e-06e1-4cd5-a27c-6f22d2f1c563/com_apple_MobileAsset_SoftwareUpdate/0019cfb77d90f14ea82ce16ede9df20458e2145e1e65b5e51c68d62446ba3890.aea",
+    "prereq": "23K54",
+    "size": 2113929216
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/232b012b-e417-4473-8285-7023d623ec01/com_apple_MobileAsset_SoftwareUpdate/3220637ef5119415005b5c81734dc62d166e83e75cefe69af04cf11bf896c8f1.aea",
+    "prereq": "22L572",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/319b56a0-027e-4b7d-b26a-5f7acc76cd7b/com_apple_MobileAsset_SoftwareUpdate/78d411ce71ac8fe5daa1134bf23e3414756ceeb5203684016c47f034d2949137.aea",
+    "prereq": "22J580",
+    "size": 2751463424
+   },
+   {
+    "version": "27.0",
+    "build": "24J6361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/fbf3c544-b770-4756-9cca-abfb2d3cb65e/com_apple_MobileAsset_SoftwareUpdate/9bf3ad6ac49c25016599bbb77d8ea1c612cb745eb7ee9e502af1926c860b7e18.aea",
+    "prereq": "",
+    "size": 4831838208
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/a5557d58-82d2-420b-9dc9-fb49c346505b/com_apple_MobileAsset_SoftwareUpdate/a0dc959bf2a11d3631258340c5340b0d0d0caa0af2a853d8b8267c330da9e8e2.aea",
+    "prereq": "20K680",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/4f14641c-4eeb-49c1-85c9-fa76b486931e/com_apple_MobileAsset_SoftwareUpdate/acc82afb77e866044cf29e570bf36630327a419f4a420d43fd93fe04f91373f1.aea",
+    "prereq": "21L227",
+    "size": 3087007744
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/f494b608-0019-4241-8166-02dfd14e8ef0/com_apple_MobileAsset_SoftwareUpdate/0ab31a3ab0112f7d01603110326d4115bcbe6124198ad2f7f40c0395b1d4311d.aea",
+    "prereq": "21L580",
+    "size": 3019898880
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/e4ab7d69-4e29-4cd9-8dcd-18613273e8a1/com_apple_MobileAsset_SoftwareUpdate/bdebbe8bb2c665ff36fee3ddb59865d70c818821c4b1eef281cf62f99fecbb26.aea",
+    "prereq": "24J360",
+    "size": 209715200
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/1be3b503-e746-4c50-a1bc-2c4d1e3a9145/com_apple_MobileAsset_SoftwareUpdate/56fa657afbf3f797b11a21f62dc6a7ff8eb300d52c2b1fba90f27f780de14ecd.aea",
+    "prereq": "20K71",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/a7dd39f5-3e41-4f2e-9fdf-2cae62ce8e9f/com_apple_MobileAsset_SoftwareUpdate/4c27a46082f879b0e8fce2f319a773eda7374a40e09ce2d6c87f0e71fb2a0df5.aea",
+    "prereq": "23L471",
+    "size": 2046820352
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/922035bd-c98e-455f-af5c-365e27cb2225/com_apple_MobileAsset_SoftwareUpdate/7a37675b00bdb775cad7ad090eac7cc299c2583c52108bdb445a01247c92c799.aea",
+    "prereq": "20L563",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/0c0f3805-1f24-4b27-b640-e95043c3f1f8/com_apple_MobileAsset_SoftwareUpdate/686e01e1dc4687ff15daf4e093ba1562275a45fe509e12463d080e41391d9de8.aea",
+    "prereq": "23K620",
+    "size": 2113929216
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/c6043924-1a0f-46e1-b169-4daf9766494e/com_apple_MobileAsset_SoftwareUpdate/9c58752514b8b66498ece0bab4112f80d6086b8c677a23ed0b74290964785e99.aea",
+    "prereq": "22K155",
+    "size": 2483027968
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/a6160594-3bee-4845-8594-fd1e63149a89/com_apple_MobileAsset_SoftwareUpdate/cc09e958bd4431fe6c7779813bd7c1a6be5504f242314e8959c5fd2dbe95480f.aea",
+    "prereq": "20K362",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/7ecad802-54b5-45c2-b376-c86dc32b5cd9/com_apple_MobileAsset_SoftwareUpdate/e6978eff3fabeeaf3d5d4f19a5e7c06defdf1b633371308b4356a84376dce0e8.aea",
+    "prereq": "22J357",
+    "size": 2751463424
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/c6ccc85d-88a5-4929-9936-2353858fc6cf/com_apple_MobileAsset_SoftwareUpdate/36fe9b5caa24447c5503690c1954c030f42d94ad94072bf839ca4744fcff06d7.aea",
+    "prereq": "20K650",
+    "size": 3422552064
+   },
+   {
+    "version": "27.0",
+    "build": "24J361",
+    "url": "https://updates.cdn-apple.com/2026FallFCS/e2acf11d-15aa-4cc5-bdfb-2c0b395cee63/com_apple_MobileAsset_SoftwareUpdate/b433c9bc30a35fdb6b3649d3e54bbd4530dbc1034778886e858d26fbebdd64d3.aea",
+    "prereq": "21M80",
+    "size": 3019898880
+   }
+  ]
+ }
+}
