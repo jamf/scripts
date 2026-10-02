@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # preheat.sh: pull the OS update assets a cache server is missing THROUGH that cache, so it is
 # warm for hardware families nobody on site owns. Reads a plan written by
 #   python3 admin/readiness-check.py --preheat-plan plan.json

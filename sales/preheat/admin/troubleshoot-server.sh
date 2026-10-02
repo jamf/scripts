@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # troubleshoot-server.sh: is this content cache registered, scoped and reachable? Read-only.
 #
 #   sudo bash admin/troubleshoot-server.sh

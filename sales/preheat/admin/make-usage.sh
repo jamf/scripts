@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # make-usage.sh: write docs/USAGE.md from every script's own --help, so the page cannot drift from the code.
 # Run after changing any option:   bash admin/make-usage.sh
 # Needs nothing but this repository: --help never contacts Jamf or Apple.

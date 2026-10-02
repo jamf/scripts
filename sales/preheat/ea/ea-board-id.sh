@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # Jamf Pro Extension Attribute: Content Caching - Board ID
 # Data type: String.  Runs on every Mac.
 # Apple silicon: hw.target gives the board ID Apple's update service keys on (e.g. J413AP).

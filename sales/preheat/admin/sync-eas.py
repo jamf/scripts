@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 """
 Push the EA scripts in ea/ into their Jamf Pro computer extension attribute definitions.
 Jamf runs the script text stored in the EA, so after editing a file here, run this.

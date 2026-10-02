@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 """
 preheat-labels.py: name the OS update files a content cache holds. Runs ON the cache server, as root,
 from a Jamf policy (recurring check-in, ongoing, with Update Inventory). Needs NO Jamf credentials.

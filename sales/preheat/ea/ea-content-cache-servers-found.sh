@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # Jamf Pro Extension Attribute: Content Caching - Servers Found
 # Data type: String.  Runs on every Mac.
 # Asks macOS which content caches THIS Mac would use for shared content (OS updates, apps),

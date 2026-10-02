@@ -1,3 +1,4 @@
+<!-- Copyright 2026, Jamf Software LLC. -->
 # Preheat as a Terraform module
 
 Everything [Jamf setup](../docs/SETUP.md#jamf-setup) does by hand or with the `admin/*.py`

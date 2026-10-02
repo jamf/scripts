@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # troubleshoot-client.sh: why does this Mac not see the content cache? Read-only; no root needed.
 #
 #   bash admin/troubleshoot-client.sh [server LAN address] [port]

@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 # import.sh: bring a Jamf Pro tenant that already has Preheat's objects (created by hand or by the
 # admin/*.py scripts) under Terraform, so the first apply changes nothing instead of failing on
 # duplicate names. Read-only against Jamf; writes only Terraform state.
