@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright 2026, Jamf Software LLC.
+# This work is licensed under the terms of the Jamf Source Available License
+# https://github.com/jamf/scripts/blob/main/LICENCE.md
 """
 Put admin/preheat-labels.py into Jamf Pro as a script, and create the policy that runs it on cache servers:
   General: trigger Recurring Check-in, frequency Ongoing     Scripts: preheat-labels.py
