@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars and edit. Credentials go in the environment, never here:
+#   export JAMFPLATFORM_BASE_URL=https://us.api.jamfcloud.com
+#   export JAMFPLATFORM_CLIENT_ID=...  JAMFPLATFORM_CLIENT_SECRET=...  JAMFPLATFORM_ENVIRONMENT_ID=...
+
+# One entry per office once its cache server's status EA has reported a guid.
+cache_servers = {
+  # "Office X" = { guid = "AAAA1111-2222-3333-4444-0FF1CE000001" }
+}
+
+labels_policy_enabled = true
