@@ -76,9 +76,20 @@ What can go wrong, each one seen in the lab.
   so do the app-based modes of other vendors. Full-tunnel or "secure internet"
   modes (tunnel-all VPN profiles, cloud web gateways that carry all traffic) break the first
   condition, since Apple then sees the tunnel's egress address; the standard fix is the
-  client's exclusion or bypass list: Apple's locator, registration and update hosts (the list
-  is in Apple's "Use Apple products on enterprise networks") plus the office subnets.
+  client's exclusion or bypass list. For discovery the two critical hosts are
+  `lcdn-locator.apple.com` (port 443, the locator service) and `serverstatus.apple.com`
+  (port 443, public IP determination on macOS); both must exit directly. The full list
+  including update CDNs is in Apple's ["Use Apple products on enterprise networks"](https://support.apple.com/en-us/101555).
+  Add the office subnets as well so clients can reach the cache's LAN address directly.
   On-device filters that do not tunnel (DNS filtering, endpoint protection) change nothing.
+  The cache's client and listen ranges (Sharing > Content Caching > Clients) control which
+  devices the cache **serves** once they find it — they do not affect **discovery**, which is
+  a public-IP match. Adding private VLAN ranges cannot fix a tunnel mismatch.
+  A `_aaplcache._tcp` DNS TXT `prs` record publishes egress address ranges to Apple's
+  locator; it is not a way around needing them. Cloud gateway providers publish egress ranges
+  per datacenter, but those ranges are broad, shared across all tenants and change without
+  notice. A `prs` record built from shared ranges is only sensible with dedicated egress IPs
+  from that provider; verify what Apple returns to clients from a shared range before using one.
   The "Macs with no content cache" Smart Group is the detector: office Macs landing there means
   something is in the way. (The ZTNA part follows Jamf's published
   [network engineer's guide](https://concepts.jamf.com/en/guides/resource-access-control/network-engineers-guide-to-private-access/);
