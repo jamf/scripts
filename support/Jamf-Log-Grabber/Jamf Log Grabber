@@ -291,9 +291,20 @@ Connect() {
 				echo $kerblist > $connect/klist_manuallyCollected.txt; 
 			fi
 		#CHECK FOR JAMF CONNECT LOGIN LOGS AND PLIST, THEN COPY AND CONVERT TO A READABLE FORMAT
+		#CURRENT LOGIN PLUGIN LOG IS /var/log/jamf_login.log (root:_securityagent, 0660, needs root to read)
+		if [ -e /var/log/jamf_login.log ]; then
+			if cp "/var/log/jamf_login.log" "$connect/jamf_login_var_log.log" 2>/dev/null; then
+				printf '<code style="color: %s;">%s<br></code>' "white" "-Collected /var/log/jamf_login.log" >> $results
+			else
+				printf '<code style="color: %s;">%s<br></code>' "red" "-Jamf Login /var/log/jamf_login.log exists but could not be read<br>-This file requires root. Run this script as root (for example via a Jamf policy or sudo)." >> $results
+			fi
+		else
+			printf '<code style="color: %s;">%s<br></code>' "orange" "-Jamf Login /var/log/jamf_login.log not found<br>-This only exists on newer Jamf Connect Login versions.<br>-Don't worry if you don't see anything. We're just being thorough." >> $results
+		fi
+		#OLDER LOGIN VERSIONS WRITE TO /tmp/jamf_login.log
 		if [ -e /tmp/jamf_login.log ]; then cp "/tmp/jamf_login.log" $connect/jamf_login_tmp.log
 		else
-			printf '<code style="color: %s;">%s<br></code>' "orange" "-Jamf Login /tmp file not found<br>-This usually only exists on recent installs.<br>-Don't worry if you don't see anything. We're just being thorough." >> $results
+			printf '<code style="color: %s;">%s<br></code>' "orange" "-Jamf Login /tmp file not found<br>-This usually only exists on older Login versions.<br>-Don't worry if you don't see anything. We're just being thorough." >> $results
 		fi
 		
 		if [ -e /Library/Managed\ Preferences/com.jamf.connect.login.plist ]; then cp "/Library/Managed Preferences/com.jamf.connect.login.plist" "$connect/com.jamf.connect.login_managed.plist" | plutil -convert xml1 "$connect/com.jamf.connect.login_managed.plist" | log show --style compact --predicate 'subsystem == "com.jamf.connect.login"' --debug > "$connect/com.jamf.connect.login.log"
